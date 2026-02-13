@@ -117,10 +117,10 @@ const Contact = () => {
                 <div className="mt-8 pt-6 border-t border-border text-center">
                   <p className="text-sm text-muted-foreground mb-2">Or email us directly at</p>
                   <a
-                    href="mailto:hello@neonotion.com"
+                    href="mailto:greaterthan2026@gmail.com"
                     className="text-primary hover:underline font-medium"
                   >
-                    hello@neonotion.com
+                    greaterthan2026@gmail.com
                   </a>
                 </div>
               </div>

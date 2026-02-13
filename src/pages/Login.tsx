@@ -1,38 +1,25 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/lib/auth-context';
 import { toast } from 'sonner';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    const { error } = await signIn(email, password);
-
-    if (error) {
-      toast.error('Login failed', {
-        description: error.message,
-      });
-    } else {
-      toast.success('Welcome back!');
-      navigate('/account');
-    }
-
-    setIsLoading(false);
+    // Temporarily disable login to prevent browser crash.
+    // We'll re-enable this once the auth flow is finalized.
+    toast.message('Coming soon', {
+      description: 'Sign-in is not available yet. We’re putting the finishing touches on it.',
+    });
   };
 
   return (
@@ -97,16 +84,8 @@ const Login = () => {
                   variant="hero"
                   size="lg"
                   className="w-full"
-                  disabled={isLoading}
                 >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing in...
-                    </>
-                  ) : (
-                    'Sign In'
-                  )}
+                  Sign In
                 </Button>
               </form>
 

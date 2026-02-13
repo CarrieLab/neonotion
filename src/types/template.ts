@@ -15,6 +15,8 @@ export interface Template {
   whats_inside: string[];
   created_at: string;
   updated_at: string;
+  rating?: number;
+  rating_count?: number;
 }
 
 export interface Purchase {

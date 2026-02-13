@@ -40,11 +40,11 @@ export function Footer() {
               Beautiful, diverse Notion templates to boost your productivity.
             </p>
             <a
-              href="mailto:hello@neonotion.com"
+              href="mailto:greaterthan2026@gmail.com"
               className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
             >
               <Mail className="h-4 w-4" />
-              hello@neonotion.com
+              greaterthan2026@gmail.com
             </a>
           </div>
 
@@ -112,7 +112,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} NeoNotion Templates. All rights reserved.
+            © {new Date().getFullYear()} SELLVERGE LLC. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground">
             Made with ❤️ for productivity enthusiasts

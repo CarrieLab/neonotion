@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import { usePurchases, useSubscription, useCreatePurchase, useCreateSubscription } from '@/hooks/usePurchases';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { TemplatePreview } from '@/components/templates/TemplatePreview';
 
 const TemplateDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -29,8 +30,8 @@ const TemplateDetail = () => {
   };
 
   const handleApply = () => {
-    toast.success('Template applied!', {
-      description: 'The template has been duplicated to your Notion workspace.',
+    toast.message('Coming soon', {
+      description: 'Apply to Notion is not available yet. We’re putting the finishing touches on it.',
     });
   };
 
@@ -123,21 +124,7 @@ const TemplateDetail = () => {
               animate={{ opacity: 1, x: 0 }}
             >
               <div className="aspect-video rounded-xl overflow-hidden border-gradient">
-                <div className="bg-card w-full h-full flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center">
-                    <Zap className="w-12 h-12 text-primary" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Gallery thumbnails */}
-              <div className="flex gap-4 mt-4">
-                {template.gallery_urls?.slice(0, 3).map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex-1 aspect-video rounded-lg overflow-hidden border border-border bg-muted"
-                  />
-                ))}
+                <TemplatePreview template={template} variant="detail" />
               </div>
             </motion.div>
 
@@ -188,10 +175,10 @@ const TemplateDetail = () => {
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
+                    <Star key={i} className={`h-5 w-5 ${i < Math.round(template.rating ?? 4.9) ? 'fill-primary text-primary' : 'fill-muted text-muted'}`} />
                   ))}
                 </div>
-                <span className="text-muted-foreground">4.9 (128 reviews)</span>
+                <span className="text-muted-foreground">{(template.rating ?? 4.9).toFixed(1)} ({template.rating_count ?? 128} reviews)</span>
               </div>
 
               {/* Description */}
@@ -237,7 +224,7 @@ const TemplateDetail = () => {
                         ) : (
                           <Crown className="mr-2 h-5 w-5" />
                         )}
-                        Unlock with Pro — $9/mo
+                        Unlock with Pro — $9.99/mo
                       </Button>
                     )}
                   </>

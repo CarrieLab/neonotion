@@ -1,0 +1,81 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A1020"/>
+      <stop offset="1" stop-color="#070A12"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="180" y1="160" x2="1020" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60A5FA" stop-opacity="0.35"/>
+      <stop offset="0.55" stop-color="#A78BFA" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#22C55E" stop-opacity="0.16"/>
+    </linearGradient>
+    <filter id="shadow" x="-20" y="-20" width="1240" height="940" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" rx="44" fill="url(#bg)"/>
+  <path d="M190 250C250 130 420 90 560 140C700 190 760 130 860 130C960 130 1040 220 1060 320C1080 420 1020 490 960 550C900 610 860 730 720 760C580 790 510 740 420 720C330 700 250 670 200 600C150 530 130 410 150 340C170 270 160 310 190 250Z" fill="url(#accent)" opacity="0.9"/>
+
+  <g filter="url(#shadow)">
+    <rect x="110" y="120" width="980" height="660" rx="28" fill="#0B0F14" stroke="#1F2937" stroke-width="2"/>
+    <rect x="110" y="120" width="980" height="56" rx="28" fill="#0E1623"/>
+    <circle cx="150" cy="148" r="7" fill="#EF4444"/>
+    <circle cx="175" cy="148" r="7" fill="#F59E0B"/>
+    <circle cx="200" cy="148" r="7" fill="#22C55E"/>
+
+    <!-- Notes + timetable split -->
+    <rect x="130" y="190" width="450" height="570" rx="18" fill="#0B1220" stroke="#1F2937"/>
+    <rect x="156" y="216" width="240" height="24" rx="12" fill="#0F172A" stroke="#1F2937"/>
+    <rect x="168" y="224" width="92" height="10" rx="5" fill="#60A5FA" fill-opacity="0.95"/>
+    <rect x="156" y="258" width="398" height="12" rx="6" fill="#1F2937"/>
+    <rect x="156" y="282" width="360" height="12" rx="6" fill="#1F2937"/>
+    <rect x="156" y="306" width="378" height="12" rx="6" fill="#1F2937"/>
+
+    <!-- Callouts -->
+    <rect x="156" y="350" width="398" height="110" rx="16" fill="#0C1627" stroke="#20324C"/>
+    <rect x="176" y="372" width="136" height="12" rx="6" fill="#A78BFA" fill-opacity="0.95"/>
+    <rect x="176" y="398" width="340" height="10" rx="5" fill="#334155"/>
+    <rect x="176" y="420" width="310" height="10" rx="5" fill="#334155"/>
+
+    <!-- Study tracker -->
+    <rect x="156" y="488" width="398" height="250" rx="16" fill="#0C131D" stroke="#1F2937"/>
+    <rect x="156" y="488" width="398" height="44" rx="16" fill="#0E1623"/>
+    <rect x="176" y="504" width="120" height="12" rx="6" fill="#22C55E" fill-opacity="0.9"/>
+    <rect x="176" y="552" width="356" height="10" rx="5" fill="#1F2937"/>
+    <rect x="176" y="580" width="330" height="10" rx="5" fill="#1F2937"/>
+    <rect x="176" y="608" width="350" height="10" rx="5" fill="#1F2937"/>
+    <rect x="176" y="636" width="310" height="10" rx="5" fill="#1F2937"/>
+    <rect x="176" y="664" width="340" height="10" rx="5" fill="#1F2937"/>
+
+    <!-- Right panel -->
+    <rect x="604" y="190" width="466" height="570" rx="18" fill="#0C131D" stroke="#1F2937"/>
+    <rect x="630" y="216" width="240" height="24" rx="12" fill="#0F172A" stroke="#1F2937"/>
+    <rect x="642" y="224" width="110" height="10" rx="5" fill="#60A5FA" fill-opacity="0.85"/>
+
+    <!-- Timetable grid -->
+    <rect x="630" y="260" width="414" height="210" rx="16" fill="#0B1220" stroke="#1F2937"/>
+    <rect x="650" y="286" width="120" height="44" rx="14" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="650" y="344" width="120" height="44" rx="14" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="650" y="402" width="120" height="44" rx="14" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="788" y="286" width="120" height="44" rx="14" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="788" y="344" width="120" height="44" rx="14" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="788" y="402" width="120" height="44" rx="14" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="926" y="286" width="118" height="44" rx="14" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="926" y="344" width="118" height="44" rx="14" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="926" y="402" width="118" height="44" rx="14" fill="#0F1B2B" stroke="#23324A"/>
+
+    <!-- Exam countdown -->
+    <rect x="630" y="494" width="414" height="244" rx="16" fill="#0B1220" stroke="#1F2937"/>
+    <rect x="652" y="520" width="160" height="12" rx="6" fill="#F59E0B" fill-opacity="0.95"/>
+    <rect x="652" y="556" width="372" height="10" rx="5" fill="#1F2937"/>
+    <rect x="652" y="584" width="344" height="10" rx="5" fill="#1F2937"/>
+    <rect x="652" y="612" width="360" height="10" rx="5" fill="#1F2937"/>
+    <rect x="652" y="650" width="230" height="42" rx="14" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="668" y="664" width="140" height="12" rx="6" fill="#A78BFA" fill-opacity="0.95"/>
+  </g>
+
+  <text x="150" y="850" fill="#94A3B8" font-family="ui-sans-serif, system-ui, -apple-system" font-size="26" letter-spacing="0.5">
+    NeoNotion  Student Planner (Preview)
+  </text>
+</svg>

@@ -1,12 +1,23 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Zap } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { Template } from '@/types/template';
 import { Badge } from '@/components/ui/badge';
+import { TemplatePreview } from '@/components/templates/TemplatePreview';
 
 interface TemplateCardProps {
   template: Template;
   index?: number;
+}
+
+/** Never show Featured badge for these templates (by title). */
+function isNoFeaturedByTitle(template: Template): boolean {
+  const lower = template.title.toLowerCase().trim();
+  return (
+    lower.includes('student planner') ||
+    lower.includes('startup operating system') ||
+    lower.includes('startup os')
+  );
 }
 
 export function TemplateCard({ template, index = 0 }: TemplateCardProps) {
@@ -14,6 +25,10 @@ export function TemplateCard({ template, index = 0 }: TemplateCardProps) {
     if (cents === null) return 'Free';
     return `$${(cents / 100).toFixed(0)}`;
   };
+
+  const rating = typeof template.rating === 'number' ? template.rating : 4.9;
+  const ratingCount =
+    typeof template.rating_count === 'number' ? template.rating_count : 128;
 
   const getPriceBadge = () => {
     if (template.is_free) {
@@ -53,13 +68,8 @@ export function TemplateCard({ template, index = 0 }: TemplateCardProps) {
           <div className="bg-card p-1">
             {/* Thumbnail */}
             <div className="aspect-[4/3] relative overflow-hidden rounded-t-lg bg-muted">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/10" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center">
-                  <Zap className="w-8 h-8 text-primary" />
-                </div>
-              </div>
-              {template.featured && (
+              <TemplatePreview template={template} variant="card" />
+              {template.featured && !isNoFeaturedByTitle(template) && (
                 <div className="absolute top-2 left-2">
                   <Badge className="bg-primary/90 text-primary-foreground text-xs">
                     <Star className="w-3 h-3 mr-1" />
@@ -102,8 +112,8 @@ export function TemplateCard({ template, index = 0 }: TemplateCardProps) {
               {/* Rating placeholder */}
               <div className="flex items-center gap-1 mt-3 text-muted-foreground">
                 <Star className="w-4 h-4 fill-primary text-primary" />
-                <span className="text-sm">4.9</span>
-                <span className="text-xs">(128)</span>
+                <span className="text-sm">{rating.toFixed(1)}</span>
+                <span className="text-xs">({ratingCount})</span>
               </div>
             </div>
           </div>

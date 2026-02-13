@@ -71,7 +71,7 @@ const AcceptableUse = () => {
         <p>
           If you become aware of any violations of this policy, please report them to us at:
         </p>
-        <p className="text-primary">abuse@neonotion.com</p>
+        <p className="text-primary">greaterthan2026@gmail.com</p>
         <p>
           We investigate all reports and take appropriate action, which may include content removal and account termination.
         </p>
@@ -102,7 +102,7 @@ const AcceptableUse = () => {
         <p>
           If you have any questions about this policy, please contact us at:
         </p>
-        <p className="text-primary">legal@neonotion.com</p>
+        <p className="text-primary">greaterthan2026@gmail.com</p>
       </LegalSection>
 
       <p className="text-sm italic mt-8">

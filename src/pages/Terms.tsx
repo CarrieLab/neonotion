@@ -6,6 +6,9 @@ const Terms = () => {
       <p>
         Welcome to NeoNotion Templates. These Terms of Service ("Terms") govern your access to and use of our website, products, and services. By accessing or using our services, you agree to be bound by these Terms.
       </p>
+      <p>
+        These services are operated by <strong>SELLVERGE LLC</strong>.
+      </p>
 
       <LegalSection title="1. Acceptance of Terms">
         <p>
@@ -111,7 +114,7 @@ const Terms = () => {
         <p>
           If you have any questions about these Terms, please contact us at:
         </p>
-        <p className="text-primary">legal@neonotion.com</p>
+        <p className="text-primary">greaterthan2026@gmail.com</p>
       </LegalSection>
 
       <p className="text-sm italic mt-8">

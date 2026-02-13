@@ -1,8 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { TemplateCard } from './TemplateCard';
 import { TemplateFilters } from './TemplateFilters';
 import { Template, SortOption } from '@/types/template';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+
+const PAGE_SIZE = 12;
 
 interface TemplateGalleryProps {
   templates: Template[] | undefined;
@@ -14,6 +16,17 @@ export function TemplateGallery({ templates, isLoading, showFilters = true }: Te
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>('popular');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset to page 1 when filters or sort change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedTags, sortOption]);
+
+  // Scroll to top when changing page so the new set is visible
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentPage]);
 
   const filteredTemplates = useMemo(() => {
     if (!templates) return [];
@@ -58,17 +71,54 @@ export function TemplateGallery({ templates, isLoading, showFilters = true }: Te
         });
         break;
       case 'popular':
-      default:
-        filtered.sort((a, b) => b.popularity_score - a.popularity_score);
+      default: {
+        // When no filters/sort applied, show featured templates first, then by popularity
+        const noFilters = !searchQuery && selectedTags.length === 0;
+        filtered.sort((a, b) => {
+          if (noFilters && (a.featured !== b.featured)) return a.featured ? -1 : 1;
+          return b.popularity_score - a.popularity_score;
+        });
+        if (noFilters) {
+          const takeByTitle = (titles: string[]): Template | null => {
+            const lowerTitles = new Set(titles.map((s) => s.toLowerCase()));
+            const idx = filtered.findIndex((t) => lowerTitles.has(t.title.toLowerCase().trim()));
+            if (idx < 0) return null;
+            return filtered.splice(idx, 1)[0];
+          };
+          const insertAt = (item: Template, index: number) => {
+            const clamped = Math.max(0, Math.min(index, filtered.length));
+            filtered.splice(clamped, 0, item);
+          };
+
+          // 1) Pin this template at page 2 slot 1 (index 12) in default gallery view.
+          const uxTemplate = takeByTitle(['ux research repository lite']);
+          if (uxTemplate) insertAt(uxTemplate, PAGE_SIZE);
+
+          // 2) Put Startup OS where Tax Prep currently is (replace its slot).
+          const startupTemplate = takeByTitle(['startup operating system', 'startup os']);
+          if (startupTemplate) {
+            const taxIndex = filtered.findIndex((t) => t.title.toLowerCase().trim() === 'tax prep & document checklist');
+            insertAt(startupTemplate, taxIndex >= 0 ? taxIndex : PAGE_SIZE);
+          }
+
+          // 3) Put Habit Tracker template at the very end.
+          const habitTrackerTemplate = takeByTitle(['habit tracker']);
+          if (habitTrackerTemplate) filtered.push(habitTrackerTemplate);
+        }
         break;
+      }
     }
 
     return filtered;
   }, [templates, searchQuery, selectedTags, sortOption]);
 
+  const totalPages = Math.ceil(filteredTemplates.length / PAGE_SIZE) || 1;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const paginatedTemplates = filteredTemplates.slice(start, start + PAGE_SIZE);
+
   const handleTagToggle = (tag: string) => {
     setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+      prev.includes(tag) ? [] : [tag]
     );
   };
 
@@ -107,11 +157,76 @@ export function TemplateGallery({ templates, isLoading, showFilters = true }: Te
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTemplates.map((template, index) => (
-            <TemplateCard key={template.id} template={template} index={index} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {paginatedTemplates.map((template, index) => (
+              <TemplateCard key={template.id} template={template} index={index} />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-10 pb-4">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </button>
+
+              <div className="flex items-center gap-1">
+                {(() => {
+                  const pages: (number | 'ellipsis')[] = [];
+                  if (totalPages <= 7) {
+                    for (let i = 1; i <= totalPages; i++) pages.push(i);
+                  } else {
+                    pages.push(1);
+                    const lo = Math.max(2, currentPage - 1);
+                    const hi = Math.min(totalPages - 1, currentPage + 1);
+                    if (lo > 2) pages.push('ellipsis');
+                    for (let i = lo; i <= hi; i++) pages.push(i);
+                    if (hi < totalPages - 1) pages.push('ellipsis');
+                    if (totalPages > 1) pages.push(totalPages);
+                  }
+                  return pages.map((p, i) =>
+                    p === 'ellipsis' ? (
+                      <span key={`e-${i}`} className="px-2 text-muted-foreground">…</span>
+                    ) : (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setCurrentPage(p)}
+                        className={`min-w-[2.25rem] h-9 px-2 rounded-lg border text-sm font-medium transition-colors ${
+                          currentPage === p
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border bg-background text-foreground hover:bg-muted'
+                        }`}
+                        aria-label={`Page ${p}`}
+                        aria-current={currentPage === p ? 'page' : undefined}
+                      >
+                        {p}
+                      </button>
+                    )
+                  );
+                })()}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-border bg-background text-foreground text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                aria-label="Next page"
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

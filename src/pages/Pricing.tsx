@@ -25,8 +25,8 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: '$9',
-    yearlyPrice: '$79',
+    price: '$9.99',
+    yearlyPrice: '$99.99',
     period: '/month',
     yearlyPeriod: '/year',
     description: 'Best value for power users',
@@ -36,7 +36,7 @@ const plans = [
       'New template drops included',
       'Priority support',
       'Early access to new releases',
-      'Save 27% with yearly billing',
+      'Save 20% with yearly billing',
     ],
     cta: 'Start Pro Subscription',
     variant: 'hero' as const,
@@ -125,7 +125,7 @@ const Pricing = () => {
               >
                 Yearly
                 <span className="text-xs bg-accent text-accent-foreground px-2 py-0.5 rounded-full">
-                  Save 27%
+                  Save 20%
                 </span>
               </button>
             </div>

@@ -10,8 +10,8 @@ const SubscriptionTerms = () => {
       <LegalSection title="1. Subscription Plans">
         <p>We offer the following subscription plans:</p>
         <ul className="list-disc pl-6 space-y-2">
-          <li><strong>Pro Monthly:</strong> $9 per month, billed monthly</li>
-          <li><strong>Pro Yearly:</strong> $79 per year, billed annually (save 27%)</li>
+          <li><strong>Pro Monthly:</strong> $9.99 per month, billed monthly</li>
+          <li><strong>Pro Yearly:</strong> $99.99 per year, billed annually (save 20%)</li>
         </ul>
         <p>
           Subscription benefits include access to all Pro-eligible templates, new template releases during your subscription period, and priority customer support.
@@ -126,7 +126,7 @@ const SubscriptionTerms = () => {
         <p>
           If you have any questions about your subscription, please contact us at:
         </p>
-        <p className="text-primary">subscriptions@neonotion.com</p>
+        <p className="text-primary">greaterthan2026@gmail.com</p>
       </LegalSection>
 
       <p className="text-sm italic mt-8">
