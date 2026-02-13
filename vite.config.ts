@@ -5,9 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === "production"
-    ? `/${(process.env.GITHUB_REPOSITORY?.split("/")?.[1] ?? "notion-brilliance")}/`
-    : "/",
+  base: mode === "production" ? "./" : "/",
   server: {
     host: "::",
     port: 8080,
