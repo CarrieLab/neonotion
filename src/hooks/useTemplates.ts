@@ -53,20 +53,25 @@ export function useTemplate(slug: string) {
   return useQuery({
     queryKey: ['template', slug],
     queryFn: async (): Promise<Template | null> => {
-      const { data, error } = await supabase
-        .from('templates')
-        .select('*')
-        .eq('slug', slug)
-        .single();
-      
-      if (error) {
-        if (error.code === 'PGRST116') {
+      try {
+        const { data, error } = await supabase
+          .from('templates')
+          .select('*')
+          .eq('slug', slug)
+          .single();
+
+        if (error) {
           const staticT = STATIC_TEMPLATES.find((t) => t.slug === slug) ?? null;
-          return staticT ? forceNoFeaturedTemplate(staticT) : null;
+          if (staticT) return forceNoFeaturedTemplate(staticT);
+          if (error.code === 'PGRST116') return null;
+          throw error;
         }
-        throw error;
+        return forceNoFeaturedTemplate(data as Template);
+      } catch (_) {
+        const staticT = STATIC_TEMPLATES.find((t) => t.slug === slug) ?? null;
+        if (staticT) return forceNoFeaturedTemplate(staticT);
+        throw _;
       }
-      return forceNoFeaturedTemplate(data as Template);
     },
     enabled: !!slug,
   });

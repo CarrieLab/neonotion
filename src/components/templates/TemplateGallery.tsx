@@ -104,6 +104,15 @@ export function TemplateGallery({ templates, isLoading, showFilters = true }: Te
           // 3) Put Habit Tracker template at the very end.
           const habitTrackerTemplate = takeByTitle(['habit tracker']);
           if (habitTrackerTemplate) filtered.push(habitTrackerTemplate);
+
+          // 4) Keep original slugs, but swap display positions for these two templates.
+          const taxSlug = 'tax-prep-document-checklist-52';
+          const dateSlug = 'date-night-ideas-bank-192';
+          const taxIdx = filtered.findIndex((t) => t.slug === taxSlug);
+          const dateIdx = filtered.findIndex((t) => t.slug === dateSlug);
+          if (taxIdx >= 0 && dateIdx >= 0 && taxIdx !== dateIdx) {
+            [filtered[taxIdx], filtered[dateIdx]] = [filtered[dateIdx], filtered[taxIdx]];
+          }
         }
         break;
       }

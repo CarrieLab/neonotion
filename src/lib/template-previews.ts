@@ -42,7 +42,9 @@ export type PreviewSkeleton =
   | 'student-semester-gpa'
   | 'startup-os'
   | 'note-taking-methods'
-  | 'wedding-planning';
+  | 'wedding-planning'
+  | 'conference-agenda'
+  | 'finance-os';
 
 export interface TemplatePreviewConfig {
   layout: PreviewLayout;
@@ -477,6 +479,41 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
   const seed = seeded(template);
   const title = template.title.toLowerCase();
 
+  // ── Tax Prep & Document Checklist FIRST (Finance OS skeleton); match by slug or title ──
+  const slugForTaxPrep = template.slug ?? '';
+  if (
+    title.includes('tax prep') ||
+    title.includes('document checklist') ||
+    slugForTaxPrep.includes('tax-prep-document-checklist') ||
+    (slugForTaxPrep.startsWith('tax-prep') && slugForTaxPrep.includes('checklist'))
+  ) {
+    return {
+      layout: 'finance',
+      variant: seed % 12,
+      shell: 'dashboard',
+      skeleton: 'finance-os' as PreviewSkeleton,
+      category: 'Personal Finance',
+      badge: 'Tax Prep',
+      accentGradient: 'linear-gradient(135deg,#7C3AED,#A855F7)',
+      sidebarSections: ['Dashboard', 'Documents', 'Income', 'Deductions', 'Deadlines'],
+      kpis: [
+        { label: 'Gathered', value: '8' },
+        { label: 'Pending', value: '4' },
+        { label: 'Due', value: 'Apr 15' },
+        { label: 'Documents', value: '12' },
+      ],
+      chartLine: { points: [2, 4, 5, 6, 8, 9, 10, 11, 12] },
+      tableHeaders: ['Document', 'Category', 'Status', 'Due'],
+      tableRows: [
+        { title: 'W-2', meta: 'Income', status: 'Done', statusTone: 'green' },
+        { title: '1099-INT', meta: 'Income', status: 'Done', statusTone: 'green' },
+        { title: 'Receipts (donations)', meta: 'Deductions', status: 'Pending', statusTone: 'amber' },
+        { title: 'Mortgage statement', meta: 'Deductions', status: 'Pending', statusTone: 'blue' },
+      ],
+      notes: ['Document checklist', 'Income sources', 'Deductions', 'Deadline tracker'],
+    };
+  }
+
   // ── Reading List (big title + table, no sidebar, no category line) ──
   if (title.includes('reading list')) {
     return {
@@ -566,7 +603,7 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
       skeleton: 'student-monthly-planner' as PreviewSkeleton,
       category: 'Student',
       badge: 'Monthly',
-      accentGradient: 'linear-gradient(135deg,#0EA5E9,#22C55E)',
+      accentGradient: 'linear-gradient(135deg,#FDE047,#FCD34D)',
       sidebarSections: [],
     };
   }
@@ -648,6 +685,31 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
       accentGradient: 'linear-gradient(135deg,#EC4899,#F59E0B)',
       sidebarSections: [],
       notes: ['Book venue', 'Choose caterer', 'Send invites', 'Finalize flowers', 'Hire photographer', 'Dress fitting'],
+    };
+  }
+
+  // ── Conference & Trip Agenda (same skeleton as Wedding: image + title + checklist, conference/trip theme) ──
+  if (title.includes('conference') && title.includes('trip agenda')) {
+    return {
+      layout: 'content',
+      variant: seed % 12,
+      shell: 'minimal',
+      skeleton: 'conference-agenda' as PreviewSkeleton,
+      category: 'Event Planning',
+      badge: 'Conference & Trip',
+      accentGradient: 'linear-gradient(135deg,#0F766E,#0D9488)',
+      sidebarSections: [],
+      notes: ['Keynote & sessions', 'Meetings & 1:1s', 'Contacts & follow-ups', 'Session notes', 'Travel & logistics', 'Action items'],
+    };
+  }
+
+  // ── Year of Habits Vision (wellness skeleton, blue theme) ──
+  if (title.includes('year of habits vision')) {
+    return {
+      ...buildWellness(template, seed),
+      category: 'Habit Tracker',
+      badge: 'Year of Habits',
+      accentGradient: 'linear-gradient(135deg,#2563EB,#0EA5E9)',
     };
   }
 
@@ -799,6 +861,64 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
     };
   }
 
+  // ── Newsletter & Email Content (use Travel Bucket skeleton style) ──
+  if (title.includes('newsletter') && title.includes('email content')) {
+    return {
+      layout: 'travel',
+      variant: seed % 12,
+      shell: 'minimal',
+      skeleton: 'featured-travel-bucket' as PreviewSkeleton,
+      category: 'Creator',
+      badge: 'Email Planner',
+      accentGradient: 'linear-gradient(135deg,#06B6D4,#10B981)',
+      sidebarSections: ['All Campaigns', 'Ideas', 'Drafting', 'Scheduled', 'Sent', 'Performance'],
+      tableHeaders: ['Campaign', 'Audience', 'Status', 'Send Date'],
+      tableRows: [
+        { title: 'Welcome Flow', meta: 'New Subscribers', status: 'Drafting', statusTone: 'purple' },
+        { title: 'Weekly Roundup', meta: 'All Subscribers', status: 'Scheduled', statusTone: 'blue' },
+        { title: 'Product Launch', meta: 'Interested Leads', status: 'Scheduled', statusTone: 'blue' },
+        { title: 'Abandoned Cart', meta: 'Cart Visitors', status: 'Idea', statusTone: 'amber' },
+        { title: 'Holiday Promo', meta: 'Segment A', status: 'Sent', statusTone: 'green' },
+        { title: 'Re-engagement', meta: 'Inactive List', status: 'Drafting', statusTone: 'purple' },
+      ],
+      boardColumns: [
+        { title: 'Ideas', dotColor: '#A855F7', cards: ['Black Friday teaser', 'Lead magnet follow-up', 'Monthly wins email'] },
+        { title: 'Drafting', dotColor: '#3B82F6', cards: ['Welcome Flow #2', 'Weekly Roundup #18'] },
+        { title: 'Sent', dotColor: '#22C55E', cards: ['Holiday Promo', 'Product Update #7'] },
+      ],
+      kpis: [
+        { label: 'Campaigns', value: '24' },
+        { label: 'Sent', value: '11' },
+        { label: 'Next Send', value: 'Fri' },
+      ],
+      notes: [
+        'Campaign planner with statuses',
+        'Audience segmentation notes',
+        'Draft-to-send workflow',
+        'Weekly send cadence tracker',
+        'Performance follow-up checklist',
+        'Reusable campaign ideas bank',
+      ],
+    };
+  }
+
+  // ── Content Creator Kit (soft orange theme) ──
+  const slug = (template.slug ?? '').toLowerCase();
+  if (slug.includes('content-creator-kit') || title.includes('content creator kit')) {
+    return {
+      ...buildContent(template, seed),
+      shell: 'dashboard',
+      accentGradient: 'linear-gradient(135deg,#FDE68A,#FDBA74)',
+      badge: 'Creator Kit',
+      skeleton: chooseSkeleton('content', seed),
+      boardColumns: [
+        { title: 'Ideas', dotColor: '#FCD34D', cards: ['Hook ideas', 'Tutorial concept', 'Case study'] },
+        { title: 'In Production', dotColor: '#FDBA74', cards: ['Script draft', 'Edit timeline', 'Thumbnail'] },
+        { title: 'Scheduled', dotColor: '#FDE68A', cards: ['Newsletter issue', 'YouTube upload'] },
+      ],
+    };
+  }
+
   // ── Featured: 12 Week Year Planner ──
   if (title.includes('12 week year planner')) {
     return {
@@ -890,7 +1010,7 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
       variant: seed % 12,
       shell: 'dashboard',
       skeleton: 'featured-social-planner' as PreviewSkeleton,
-      category: 'Content Calendar',
+      category: 'Event Planning',
       badge: '📱 Social Planner',
       accentGradient: 'linear-gradient(135deg,#8B5CF6,#EC4899)',
       sidebarSections: ['Dashboard', 'All Posts', 'Calendar', 'Hashtag Bank', 'Analytics', 'Repurpose'],

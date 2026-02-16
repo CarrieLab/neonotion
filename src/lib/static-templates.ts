@@ -1217,11 +1217,11 @@ Perfect for travelers who want clarity and inspiration in one place, this templa
     is_subscription_included: true,
   },
 
-  // —— Creator & Content Calendar ——
+  // —— Creator & Editorial ——
   {
     title: 'Content Calendar & Editorial',
     description: 'Plan content across channels. Ideas, calendar, and status in one place.',
-    tag: 'Content Calendar',
+    tag: 'Event Planning',
     whats_inside: ['Calendar view', 'Channel', 'Status', 'Owner'],
     is_free: true,
   },
@@ -1234,7 +1234,7 @@ Perfect for travelers who want clarity and inspiration in one place, this templa
   },
   {
     title: 'Newsletter & Email Content',
-    description: 'Plan and draft newsletter issues. Topics, drafts, and send dates.',
+    description: 'The Email Marketing Content Planner is a great tool to help you stay organized and ahead with planning your email marketing content.',
     tag: 'Creator',
     whats_inside: ['Issue list', 'Topic', 'Draft', 'Send date'],
     is_free: true,
@@ -1242,14 +1242,14 @@ Perfect for travelers who want clarity and inspiration in one place, this templa
   {
     title: 'Blog & Article Pipeline',
     description: 'Article ideas, outline, and publish status. SEO and content in one pipeline.',
-    tag: 'Content Calendar',
+    tag: 'Event Planning',
     whats_inside: ['Article database', 'Outline', 'Status', 'Publish'],
     is_free: true,
   },
   {
     title: 'Social Media Planner',
     description: 'Plan posts by platform and date. Caption, asset, and hashtags in one row.',
-    tag: 'Content Calendar',
+    tag: 'Event Planning',
     whats_inside: ['Post database', 'Platform', 'Date', 'Caption'],
     is_free: true,
   },
@@ -1273,14 +1273,14 @@ Perfect for travelers who want clarity and inspiration in one place, this templa
   {
     title: 'Idea Bank & Content Seeds',
     description: 'Capture content ideas as they come. Tag and prioritize so you never run out of ideas.',
-    tag: 'Content Calendar',
+    tag: 'Event Planning',
     whats_inside: ['Idea database', 'Tags', 'Priority', 'Status'],
     is_free: true,
   },
   {
     title: 'Launch & Campaign Calendar',
     description: 'Plan launches and campaigns: timeline, assets, and channels in one view.',
-    tag: 'Content Calendar',
+    tag: 'Event Planning',
     whats_inside: ['Campaign list', 'Timeline', 'Assets', 'Channels'],
     is_free: false,
     price_cents: 1799,
@@ -1311,14 +1311,14 @@ Perfect for travelers who want clarity and inspiration in one place, this templa
   {
     title: 'Content Performance Log',
     description: 'Log performance for key content: views, engagement, and learnings.',
-    tag: 'Content Calendar',
+    tag: 'Event Planning',
     whats_inside: ['Content list', 'Metrics', 'Learnings', 'Next time'],
     is_free: true,
   },
   {
     title: 'Editorial Workflow & Approval',
     description: 'Draft → review → approve. Simple workflow for teams that publish content.',
-    tag: 'Content Calendar',
+    tag: 'Event Planning',
     whats_inside: ['Draft', 'Review', 'Approval', 'Publish'],
     is_free: false,
     price_cents: 2299,
@@ -1335,7 +1335,7 @@ Perfect for travelers who want clarity and inspiration in one place, this templa
   {
     title: 'Multi-Platform Content Grid',
     description: 'One content piece, many platforms. Track what goes where and when.',
-    tag: 'Content Calendar',
+    tag: 'Event Planning',
     whats_inside: ['Content database', 'Platforms', 'Adaptation', 'Schedule'],
     is_free: true,
   },
@@ -1775,7 +1775,7 @@ Perfect for travelers who want clarity and inspiration in one place, this templa
   {
     title: 'The 2026 Social Media Content Planner',
     description: 'Plan, create, and schedule content across every social platform in one workspace. Organize posts by platform (Instagram, TikTok, YouTube, LinkedIn, X), track their status from idea to published, and view everything on a calendar or kanban board. Includes a hashtag bank, caption drafts area, and weekly analytics snapshot so you always know what is working.',
-    tag: 'Content Calendar',
+    tag: 'Event Planning',
     whats_inside: [
       'Multi-platform content database',
       'Calendar and board views by status',
@@ -1785,6 +1785,7 @@ Perfect for travelers who want clarity and inspiration in one place, this templa
       'Repurpose tracker for cross-platform content',
     ],
     is_free: true,
+    featured: true,
   },
   {
     title: 'Content Planner for TikTok & Instagram Influencers',

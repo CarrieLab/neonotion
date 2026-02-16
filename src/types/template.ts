@@ -58,7 +58,6 @@ export const ALL_TAGS = [
   'Personal Finance',
   'Project Management',
   'CRM',
-  'Content Calendar',
   'Habit Tracker',
   'Wedding',
   'Travel',

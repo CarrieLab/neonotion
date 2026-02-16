@@ -204,12 +204,21 @@ function AISkillPathPreview({ config, template }: { config: ReturnType<typeof ge
 /* ------------------------------------------------------------------ */
 /*  Featured: Travel Bucket List & Wish List                           */
 /* ------------------------------------------------------------------ */
-function TravelBucketPreview({ config }: { config: ReturnType<typeof getTemplatePreviewConfig>; template: Template }) {
+function TravelBucketPreview({ config, template }: { config: ReturnType<typeof getTemplatePreviewConfig>; template: Template }) {
   const rows = config.tableRows ?? [];
   const cols = config.boardColumns ?? [];
+  const lowerTitle = template.title.toLowerCase();
+  const isNewsletterEmail = lowerTitle.includes('newsletter') && lowerTitle.includes('email content');
 
   // Destination cover gradients to simulate travel photos
-  const coverGradients = [
+  const coverGradients = isNewsletterEmail ? [
+    'linear-gradient(135deg,#0EA5E9,#3B82F6)', // newsletter blue
+    'linear-gradient(135deg,#06B6D4,#14B8A6)', // campaign teal
+    'linear-gradient(135deg,#8B5CF6,#A855F7)', // automation purple
+    'linear-gradient(135deg,#F59E0B,#F97316)', // promo orange
+    'linear-gradient(135deg,#10B981,#22C55E)', // sent green
+    'linear-gradient(135deg,#EC4899,#F43F5E)', // segment pink
+  ] : [
     'linear-gradient(135deg,#06B6D4,#3B82F6)', // ocean blue
     'linear-gradient(135deg,#F472B6,#FB923C)', // sunset
     'linear-gradient(135deg,#34D399,#059669)', // forest
@@ -217,30 +226,47 @@ function TravelBucketPreview({ config }: { config: ReturnType<typeof getTemplate
     'linear-gradient(135deg,#FCD34D,#F59E0B)', // desert
     'linear-gradient(135deg,#E879F9,#7C3AED)', // northern lights
   ];
-  const coverIcons = ['🏝️', '⛩️', '🏔️', '🧊', '🌴', '🗻'];
+  const coverIcons = isNewsletterEmail
+    ? ['📧', '🗞️', '📬', '🧲', '📈', '🎯']
+    : ['🏝️', '⛩️', '🏔️', '🧊', '🌴', '🗻'];
+
+  const moduleBgClasses = isNewsletterEmail
+    ? [
+        'bg-sky-50/80 dark:bg-sky-950/25',
+        'bg-cyan-50/80 dark:bg-cyan-950/25',
+        'bg-violet-50/80 dark:bg-violet-950/25',
+        'bg-amber-50/80 dark:bg-amber-950/25',
+        'bg-emerald-50/80 dark:bg-emerald-950/25',
+        'bg-pink-50/80 dark:bg-pink-950/25',
+      ]
+    : ['bg-background/70'];
+  const textTitleClass = isNewsletterEmail ? 'text-slate-800 dark:text-slate-100' : 'text-foreground';
+  const textMetaClass = isNewsletterEmail ? 'text-slate-600 dark:text-slate-300' : 'text-muted-foreground';
 
   return (
     <div className="space-y-2.5 h-full">
       {/* Gallery view — destination cards (replicates Notion gallery layout) */}
       <div className="rounded-lg border border-border/70 bg-foreground/5 p-2">
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[9px] text-muted-foreground font-medium">All Destinations</span>
+          <span className={`text-[9px] font-medium ${isNewsletterEmail ? 'text-slate-600 dark:text-slate-300' : 'text-muted-foreground'}`}>
+            {isNewsletterEmail ? 'All Campaigns' : 'All Destinations'}
+          </span>
           <div className="flex gap-1">
-            {['Gallery', 'Board', 'Table', 'Map'].map((v) => (
+            {(isNewsletterEmail ? ['Gallery', 'Board', 'Table', 'Calendar'] : ['Gallery', 'Board', 'Table', 'Map']).map((v) => (
               <span key={v} className={`px-1.5 py-0.5 text-[7px] rounded border ${v === 'Gallery' ? 'bg-teal-600/25 border-teal-500/40 text-teal-200' : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}>{v}</span>
             ))}
           </div>
         </div>
         <div className="grid grid-cols-3 gap-1.5">
           {rows.slice(0, 6).map((row, i) => (
-            <div key={row.title} className="rounded-md border border-border/60 bg-background/70 overflow-hidden">
+            <div key={row.title} className={`rounded-md border border-border/60 overflow-hidden ${moduleBgClasses[i % moduleBgClasses.length]}`}>
               {/* Cover photo sim */}
               <div className="h-8 w-full flex items-center justify-center text-sm" style={{ background: coverGradients[i % coverGradients.length] }}>
                 {coverIcons[i % coverIcons.length]}
               </div>
               <div className="p-1.5">
-                <div className="text-[8px] text-foreground font-medium truncate">{row.title}</div>
-                <div className="text-[7px] text-muted-foreground truncate">{row.meta}</div>
+                <div className={`text-[8px] font-medium truncate ${textTitleClass}`}>{row.title}</div>
+                <div className={`text-[7px] truncate ${textMetaClass}`}>{row.meta}</div>
                 <span className={`inline-block mt-0.5 px-1 py-0 text-[6px] rounded border ${statusToneClass(row.statusTone)}`}>{row.status}</span>
               </div>
             </div>
@@ -250,15 +276,15 @@ function TravelBucketPreview({ config }: { config: ReturnType<typeof getTemplate
 
       {/* Board columns — Dreaming / Planning / Explored */}
       <div className="grid grid-cols-3 gap-1.5">
-        {cols.slice(0, 3).map((col) => (
-          <div key={col.title} className="rounded-lg border border-border/70 bg-foreground/5 p-1.5">
+        {cols.slice(0, 3).map((col, i) => (
+          <div key={col.title} className={`rounded-lg border border-border/70 p-1.5 ${moduleBgClasses[i % moduleBgClasses.length]}`}>
             <div className="flex items-center gap-1 mb-1">
               <span className="h-2 w-2 rounded-full" style={{ background: col.dotColor }} />
-              <span className="text-[8px] text-foreground font-medium">{col.title}</span>
-              <span className="text-[7px] text-muted-foreground ml-auto">{col.cards.length}</span>
+              <span className={`text-[8px] font-medium ${textTitleClass}`}>{col.title}</span>
+              <span className={`text-[7px] ml-auto ${textMetaClass}`}>{col.cards.length}</span>
             </div>
-            {col.cards.slice(0, 2).map((c) => (
-              <div key={c} className="rounded border border-border/60 bg-background/70 px-1.5 py-0.5 text-[7px] text-foreground truncate mb-0.5">{c}</div>
+            {col.cards.slice(0, 2).map((c, j) => (
+              <div key={c} className={`rounded border border-border/60 px-1.5 py-0.5 text-[7px] truncate mb-0.5 ${moduleBgClasses[(i + j + 1) % moduleBgClasses.length]} ${textTitleClass}`}>{c}</div>
             ))}
           </div>
         ))}
@@ -570,7 +596,7 @@ function SocialPlannerPreview({ config }: { config: ReturnType<typeof getTemplat
       {/* Calendar mini-view */}
       <div className="rounded-lg border border-border/70 bg-foreground/5 p-2">
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[9px] text-muted-foreground font-medium">Content Calendar</span>
+          <span className="text-[9px] text-muted-foreground font-medium">Calendar</span>
           <div className="flex gap-1">
             {['Calendar', 'Board', 'Table'].map((v) => (
               <span key={v} className={`px-1.5 py-0.5 text-[7px] rounded border ${v === 'Calendar' ? 'bg-violet-600/25 border-violet-500/40 text-violet-200' : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}>{v}</span>
@@ -794,7 +820,64 @@ function WeddingPlanningPreview({ config, template }: { config: ReturnType<typeo
 }
 
 /* ------------------------------------------------------------------ */
-/*  Student: Monthly Planner — realistic month illustration + calendar grid */
+/*  Conference & Trip Agenda — same skeleton as Wedding: image + title + checklist (conference/trip theme) */
+/* ------------------------------------------------------------------ */
+const CONFERENCE_IMAGE = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80';
+
+function ConferenceAgendaPreview({ config, template }: { config: ReturnType<typeof getTemplatePreviewConfig>; template?: Template }) {
+  const items = (config.notes ?? ['Keynote & sessions', 'Meetings & 1:1s', 'Contacts & follow-ups', 'Session notes', 'Travel & logistics', 'Action items']).slice(0, 6);
+  const completedCount = 2;
+  const title = template?.title ?? 'Conference & Trip Agenda';
+  return (
+    <div className="space-y-2.5 h-full flex flex-col">
+      <div className="w-full rounded-lg overflow-hidden border border-teal-200/40 dark:border-teal-500/20 flex-shrink-0 min-h-[3.5rem] max-h-[5rem] bg-teal-50/30 dark:bg-teal-950/20">
+        <img
+          src={CONFERENCE_IMAGE}
+          alt=""
+          className="w-full h-full object-cover min-h-[3.5rem] max-h-[5rem]"
+          onError={(e) => {
+            const t = e.currentTarget;
+            t.style.display = 'none';
+            const fallback = t.nextElementSibling as HTMLElement;
+            if (fallback) fallback.style.display = 'flex';
+          }}
+        />
+        <div
+          className="hidden w-full min-h-[3.5rem] max-h-[5rem] items-center justify-center"
+          style={{ background: 'linear-gradient(135deg, #ccfbf1 0%, #99f6e4 50%, #5eead4 100%)' }}
+        >
+          <span className="text-sm font-bold text-teal-700/90">Conference</span>
+        </div>
+      </div>
+      <h2 className="text-base font-bold text-foreground leading-tight flex-shrink-0">
+        {title}
+      </h2>
+      <div className="flex-1 min-h-0 p-0">
+        <div className="text-[10px] font-bold text-teal-800 dark:text-teal-200 mb-1.5">Conference & trip checklist</div>
+        <div className="space-y-1.5">
+          {items.map((label, i) => {
+            const done = i < completedCount;
+            return (
+              <div key={i} className="flex items-center gap-2">
+                <span className="h-3.5 w-3.5 rounded-full border-2 flex-shrink-0 flex items-center justify-center text-[8px] font-bold text-teal-600 dark:text-teal-400 border-teal-400/60 dark:border-teal-400/50 bg-teal-100/50 dark:bg-teal-900/20">
+                  {done ? '✓' : ''}
+                </span>
+                <span
+                  className={`text-[8px] truncate ${done ? 'line-through decoration-teal-500 decoration-2 text-muted-foreground' : 'text-foreground'}`}
+                >
+                  {label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Student: Monthly Planner — realistic month illustration + calendar grid (refined yellow theme) */
 /* ------------------------------------------------------------------ */
 function MonthlyPlannerPreview() {
   const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -806,17 +889,24 @@ function MonthlyPlannerPreview() {
   });
   return (
     <div className="space-y-2.5 h-full flex flex-col">
-      {/* Realistic month plan illustration: header + week row + date grid */}
-      <div className="w-full rounded-lg overflow-hidden border border-border/60 flex-shrink-0 bg-white dark:bg-zinc-900 p-2 shadow-sm">
-        <div className="text-[10px] font-semibold text-foreground text-center mb-1.5">February 2025</div>
-        <div className="grid grid-cols-7 gap-px mb-1">
+      {/* Refined month illustration: soft yellow gradient header + elegant date grid */}
+      <div className="w-full rounded-xl overflow-hidden border border-yellow-200/60 dark:border-yellow-500/25 flex-shrink-0 bg-gradient-to-br from-yellow-50 via-amber-50 to-yellow-100 dark:from-yellow-950/30 dark:via-amber-950/30 dark:to-yellow-900/40 p-3 shadow-md">
+        <div className="text-[11px] font-bold text-yellow-900 dark:text-yellow-200 text-center mb-2 tracking-wide">February 2025</div>
+        <div className="grid grid-cols-7 gap-1 mb-2">
           {weekdays.map((d) => (
-            <div key={d} className="text-center text-[7px] text-muted-foreground font-medium">{d}</div>
+            <div key={d} className="text-center text-[8px] text-yellow-700/80 dark:text-yellow-300/70 font-semibold">{d}</div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-px">
+        <div className="grid grid-cols-7 gap-1.5">
           {cells.slice(0, 14).map((d, i) => (
-            <div key={i} className="aspect-square rounded-sm border border-border/50 bg-background/50 flex items-center justify-center text-[7px] text-foreground">
+            <div 
+              key={i} 
+              className={`aspect-square rounded-md flex items-center justify-center text-[8px] font-medium shadow-sm transition-all ${
+                d 
+                  ? 'bg-white dark:bg-yellow-900/60 border border-yellow-300/50 dark:border-yellow-500/30 text-yellow-900 dark:text-yellow-100 hover:shadow-md hover:border-yellow-400/70' 
+                  : 'bg-transparent'
+              }`}
+            >
               {d ?? ''}
             </div>
           ))}
@@ -825,14 +915,14 @@ function MonthlyPlannerPreview() {
       <h2 className="text-sm font-bold text-foreground leading-tight flex-shrink-0">
         Minimal Planner
       </h2>
-      {/* Calendar grid with visible cells */}
-      <div className="rounded-md border border-border/70 bg-foreground/5 p-1.5 flex-1 min-h-0">
-        <div className="grid grid-cols-7 gap-px">
+      {/* Full calendar grid with refined styling */}
+      <div className="rounded-lg border border-yellow-200/70 dark:border-yellow-500/20 bg-gradient-to-br from-yellow-50/50 to-amber-50/30 dark:from-yellow-950/20 dark:to-amber-950/10 p-2 flex-1 min-h-0 shadow-sm">
+        <div className="grid grid-cols-7 gap-1">
           {weekdays.map((d) => (
-            <div key={d} className="text-center text-[7px] text-muted-foreground font-medium py-0.5 border-b border-border/50">{d}</div>
+            <div key={d} className="text-center text-[7px] text-yellow-700/80 dark:text-yellow-300/70 font-semibold py-0.5 border-b border-yellow-300/40 dark:border-yellow-500/20">{d}</div>
           ))}
           {Array.from({ length: 7 * 4 }).map((_, i) => (
-            <div key={i} className="aspect-square min-h-[14px] rounded-sm border border-border/60 bg-background/70" />
+            <div key={i} className="aspect-square min-h-[14px] rounded-md border border-yellow-300/50 dark:border-yellow-500/25 bg-white/80 dark:bg-yellow-900/40 shadow-sm hover:shadow-md hover:border-yellow-400/70 transition-all" />
           ))}
         </div>
       </div>
@@ -898,6 +988,84 @@ function StartupOSPreview({ config }: { config: ReturnType<typeof getTemplatePre
                 />
               </div>
               <span className="text-[7px] text-muted-foreground">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Finance OS — KPIs + trend line + document/expense table (Tax Prep, etc.) */
+/* ------------------------------------------------------------------ */
+function FinanceOSPreview({
+  config,
+  template,
+}: {
+  config: ReturnType<typeof getTemplatePreviewConfig>;
+  template: Template;
+}) {
+  const kpis = config.kpis ?? [
+    { label: 'Gathered', value: '8' },
+    { label: 'Pending', value: '4' },
+    { label: 'Due', value: 'Apr 15' },
+    { label: 'Documents', value: '12' },
+  ];
+  const linePoints = config.chartLine?.points ?? [2, 4, 5, 6, 8, 9, 10, 11, 12];
+  const maxLine = Math.max(...linePoints, 1);
+  const headers = config.tableHeaders ?? ['Document', 'Category', 'Status', 'Due'];
+  const rows = config.tableRows ?? [];
+
+  return (
+    <div className="space-y-2.5 h-full">
+      <div className="grid grid-cols-4 gap-2">
+        {kpis.map((kpi) => (
+          <div key={kpi.label} className="rounded-md border border-border/70 bg-foreground/5 p-2">
+            <div className="text-[8px] text-muted-foreground">{kpi.label}</div>
+            <div className="text-[10px] text-foreground font-semibold">{kpi.value}</div>
+          </div>
+        ))}
+      </div>
+      <div className="rounded-lg border border-border/70 bg-foreground/5 p-2">
+        <div className="text-[9px] text-muted-foreground mb-1.5">Trend</div>
+        <div className="h-12 w-full relative">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
+            <polyline
+              fill="none"
+              stroke="rgb(139, 92, 246)"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              points={linePoints
+                .slice(0, 9)
+                .map((p, i) => `${(i / Math.max(linePoints.length - 1, 1)) * 100},${100 - (p / maxLine) * 95}`)
+                .join(' ')}
+            />
+          </svg>
+        </div>
+      </div>
+      <div className="rounded-md border border-border/70 overflow-hidden">
+        <div className="grid gap-0 border-b border-border/70 bg-foreground/5" style={{ gridTemplateColumns: `repeat(${headers.length}, minmax(0, 1fr))` }}>
+          {headers.map((h) => (
+            <div key={h} className="px-2 py-1.5 text-[9px] font-medium text-muted-foreground truncate">
+              {h}
+            </div>
+          ))}
+        </div>
+        <div className="divide-y divide-border/60">
+          {rows.slice(0, 4).map((row, i) => (
+            <div key={`${row.title}-${i}`} className="grid gap-0 items-center" style={{ gridTemplateColumns: `repeat(${headers.length}, minmax(0, 1fr))` }}>
+              <div className="px-2 py-1.5 text-[9px] text-foreground truncate">{row.title}</div>
+              <div className="px-2 py-1.5 text-[9px] text-muted-foreground truncate">{row.meta}</div>
+              <div className="px-2 py-1.5">
+                <span className={`inline-block px-1.5 py-0.5 text-[8px] rounded border ${statusToneClass(row.statusTone)}`}>
+                  {row.status}
+                </span>
+              </div>
+              <div className="px-2 py-1.5 text-[9px] text-muted-foreground truncate">
+                {i < 2 ? 'Apr 15' : '—'}
+              </div>
             </div>
           ))}
         </div>
@@ -1194,7 +1362,9 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
   const isAIEngineeringBaraa = template.title.toLowerCase().includes('ai engineering roadmap by data with baraa');
   const isAIEngineeringSkillPath = template.title.toLowerCase().includes('ai engineering skill path');
   const isFeaturedAI = isAIEngineeringBaraa || isAIEngineeringSkillPath;
-  const isFeaturedTravel = template.title.toLowerCase().includes('travel bucket list');
+  const isFeaturedTravel =
+    template.title.toLowerCase().includes('travel bucket list') ||
+    (template.title.toLowerCase().includes('newsletter') && template.title.toLowerCase().includes('email content'));
   const isFeatured12Week = template.title.toLowerCase().includes('12 week year planner');
   const isReplicaTravelWish = template.title.toLowerCase().includes('travel bucket wish list');
   const isReplicaSocialPlanner = template.title.toLowerCase().includes('2026 social media');
@@ -1205,8 +1375,10 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
   const isMyClassSchedule = template.title.toLowerCase().includes('my class schedule');
   const isStartupOS = template.title.toLowerCase().includes('startup operating system') || template.title.toLowerCase().includes('startup os');
   const isWeddingPlanning = template.title.toLowerCase().includes('wedding planning');
+  const isConferenceAgenda = template.title.toLowerCase().includes('conference') && template.title.toLowerCase().includes('trip agenda');
   const isUXResearchRepositoryLite = template.title.toLowerCase().includes('ux research repository lite');
-  const isAnyFeatured = isFeaturedTarot || isFeaturedAI || isFeaturedTravel || isFeatured12Week || isReplicaTravelWish || isReplicaSocialPlanner || isReplicaTikTokIG || isReadingList || isStudentLessonPlanner || isMonthlyPlanner || isMyClassSchedule || isStartupOS || isWeddingPlanning || isUXResearchRepositoryLite;
+  const isContentCreatorKit = (template.slug ?? '').toLowerCase().includes('content-creator-kit') || template.title.toLowerCase().includes('content creator kit');
+  const isAnyFeatured = isFeaturedTarot || isFeaturedAI || isFeaturedTravel || isFeatured12Week || isReplicaTravelWish || isReplicaSocialPlanner || isReplicaTikTokIG || isReadingList || isStudentLessonPlanner || isMonthlyPlanner || isMyClassSchedule || isStartupOS || isWeddingPlanning || isConferenceAgenda || isUXResearchRepositoryLite;
 
   return (
     <div className={`relative w-full h-full ${variant === 'card' ? 'scale-[1.02]' : ''}`}>
@@ -1244,13 +1416,13 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
                 </>
               ) : (
                 <>
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
+                  <span className={`w-2.5 h-2.5 rounded-full ${isContentCreatorKit ? 'bg-amber-500/80' : 'bg-red-500/80'}`} />
+                  <span className={`w-2.5 h-2.5 rounded-full ${isContentCreatorKit ? 'bg-orange-400/80' : 'bg-amber-400/80'}`} />
+                  <span className={`w-2.5 h-2.5 rounded-full ${isContentCreatorKit ? 'bg-amber-400/80' : 'bg-emerald-400/80'}`} />
                 </>
               )}
             </div>
-            <div className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-foreground/5 text-muted-foreground border border-border/60 truncate">
+            <div className={`px-2 py-0.5 rounded-full text-[10px] font-medium truncate ${isContentCreatorKit ? 'bg-amber-500/20 text-amber-200 border border-amber-500/40' : 'bg-foreground/5 text-muted-foreground border border-border/60'}`}>
               {config.badge}
             </div>
           </div>
@@ -1410,6 +1582,9 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
             {/* ── Wedding Planning Hub ── */}
             {isWeddingPlanning ? <WeddingPlanningPreview config={config} template={template} /> : null}
 
+            {/* ── Conference & Trip Agenda (same skeleton as Wedding, conference/trip theme) ── */}
+            {isConferenceAgenda ? <ConferenceAgendaPreview config={config} template={template} /> : null}
+
             {/* ── UX Research Repository Lite ── */}
             {isUXResearchRepositoryLite ? <UXResearchRepositoryLitePreview template={template} /> : null}
 
@@ -1476,10 +1651,10 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
             ) : null}
 
             {!isAnyFeatured && skeleton === 'database-first' ? (
-              <div className="space-y-2 h-full">
+              <div className={`space-y-2 h-full ${isContentCreatorKit ? 'text-slate-200' : ''}`}>
                 <div className="flex gap-1.5">
                   {['Table', 'Board', 'Calendar', 'Timeline', 'List'].map((v) => (
-                    <span key={v} className={`px-1.5 py-0.5 text-[8px] rounded border ${v === 'Table' ? 'bg-primary/20 border-primary/40 text-primary-foreground' : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}>
+                    <span key={v} className={`px-1.5 py-0.5 text-[8px] rounded border ${v === 'Table' ? (isContentCreatorKit ? 'bg-amber-500/25 border-amber-500/50 text-amber-100' : 'bg-primary/20 border-primary/40 text-primary-foreground') : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}>
                       {v}
                     </span>
                   ))}
@@ -1487,27 +1662,30 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
                 <div className="rounded-md border border-border/70 overflow-hidden">
                   <div className="grid grid-cols-4 bg-foreground/5 border-b border-border/70">
                     {(config.tableHeaders ?? ['Name', 'Owner', 'Status', 'Updated']).map((h) => (
-                      <div key={h} className="px-2 py-1.5 text-[9px] font-medium text-muted-foreground truncate">{h}</div>
+                      <div key={h} className={`px-2 py-1.5 text-[9px] font-medium truncate ${isContentCreatorKit ? 'text-slate-400' : 'text-muted-foreground'}`}>{h}</div>
                     ))}
                   </div>
                   <div className="divide-y divide-border/60">
                     {(config.tableRows ?? []).slice(0, 5).map((row, i) => (
                       <div key={`${row.title}-${i}`} className="grid grid-cols-4 items-center">
-                        <div className="px-2 py-1.5 text-[9px] text-foreground truncate">{row.title}</div>
-                        <div className="px-2 py-1.5 text-[9px] text-muted-foreground truncate">{row.meta}</div>
-                        <div className="px-2 py-1.5"><span className={`inline-block px-1.5 py-0.5 text-[8px] rounded border ${statusToneClass(row.statusTone)}`}>{row.status}</span></div>
-                        <div className="px-2 py-1.5 text-[9px] text-muted-foreground truncate">{`D-${12 + i}`}</div>
+                        <div className={`px-2 py-1.5 text-[9px] truncate ${isContentCreatorKit ? 'text-slate-200' : 'text-foreground'}`}>{row.title}</div>
+                        <div className={`px-2 py-1.5 text-[9px] truncate ${isContentCreatorKit ? 'text-slate-400' : 'text-muted-foreground'}`}>{row.meta}</div>
+                        <div className="px-2 py-1.5"><span className={`inline-block px-1.5 py-0.5 text-[8px] rounded border ${isContentCreatorKit ? 'bg-amber-500/20 text-amber-200 border-amber-500/40' : statusToneClass(row.statusTone)}`}>{row.status}</span></div>
+                        <div className={`px-2 py-1.5 text-[9px] truncate ${isContentCreatorKit ? 'text-slate-400' : 'text-muted-foreground'}`}>{`D-${12 + i}`}</div>
                       </div>
                     ))}
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   {(config.boardColumns ?? []).slice(0, 3).map((col) => (
-                    <div key={col.title} className="rounded-md border border-border/70 bg-foreground/5 p-2">
-                      <div className="text-[9px] text-foreground mb-1">{col.title}</div>
+                    <div key={col.title} className={`rounded-md border p-2 ${isContentCreatorKit ? 'border-amber-500/30 bg-white/5' : 'border-border/70 bg-foreground/5'}`}>
+                      <div className={`text-[9px] mb-1 flex items-center gap-1 ${isContentCreatorKit ? 'text-amber-200' : 'text-foreground'}`}>
+                        {isContentCreatorKit ? <span className="h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: col.dotColor }} /> : null}
+                        {col.title}
+                      </div>
                       <div className="space-y-1">
                         {col.cards.slice(0, 2).map((c) => (
-                          <div key={c} className="rounded bg-background/70 border border-border/60 px-1.5 py-1 text-[8px] text-foreground truncate">{c}</div>
+                          <div key={c} className={`rounded border px-1.5 py-1 text-[8px] truncate ${isContentCreatorKit ? 'bg-white/5 border-amber-500/20 text-slate-200' : 'bg-background/70 border-border/60 text-foreground'}`}>{c}</div>
                         ))}
                       </div>
                     </div>
@@ -1612,6 +1790,11 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
             {/* Startup Operating System — date filter + green line + dual bar */}
             {!isAnyFeatured && skeleton === 'startup-os' ? (
               <StartupOSPreview config={config} />
+            ) : null}
+
+            {/* Finance OS — KPIs + trend line + document table (Tax Prep, etc.) */}
+            {!isAnyFeatured && skeleton === 'finance-os' ? (
+              <FinanceOSPreview config={config} template={template} />
             ) : null}
 
             {/* Note-Taking Methods Library — filter + line chart */}
