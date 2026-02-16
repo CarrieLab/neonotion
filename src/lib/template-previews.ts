@@ -1048,6 +1048,47 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
     };
   }
 
+  // ── Replica: Investment & Portfolio Log ──
+  if (title.includes('investment & portfolio log') || title.includes('investment portfolio log') || template.slug.includes('investment-portfolio-log')) {
+    return {
+      layout: 'content',
+      variant: seed % 12,
+      shell: 'app',
+      skeleton: 'featured-tiktok-ig' as PreviewSkeleton,
+      category: 'Personal Finance',
+      badge: '📈 Portfolio Tracker',
+      accentGradient: 'linear-gradient(135deg,#2563EB,#10B981)',
+      sidebarSections: ['Market Pulse', 'Watchlist', 'Holdings', 'Trades', 'Dividends', 'Risk', 'Notes'],
+      tableHeaders: ['Asset', 'Type', 'Status', 'Weight'],
+      tableRows: [
+        { title: 'AAPL', meta: 'Stock', status: 'Accumulating', statusTone: 'green' },
+        { title: 'NVDA', meta: 'Stock', status: 'Watching', statusTone: 'blue' },
+        { title: 'VOO', meta: 'ETF', status: 'Core Hold', statusTone: 'purple' },
+        { title: 'TSLA', meta: 'Stock', status: 'Trimmed', statusTone: 'amber' },
+        { title: 'MSFT', meta: 'Stock', status: 'Hold', statusTone: 'green' },
+      ],
+      boardColumns: [
+        { title: 'Research', dotColor: '#3B82F6', cards: ['Earnings notes', 'Sector rotation'] },
+        { title: 'Active', dotColor: '#10B981', cards: ['AAPL add-on', 'VOO DCA'] },
+        { title: 'Review', dotColor: '#F59E0B', cards: ['Rebalance check', 'Stop-loss update'] },
+        { title: 'Closed', dotColor: '#8B5CF6', cards: ['TSLA swing', 'Hedge unwind'] },
+      ],
+      kpis: [
+        { label: 'Total Value', value: '$248.3K' },
+        { label: '1D Change', value: '+1.7%' },
+        { label: 'YTD', value: '+12.4%' },
+      ],
+      notes: [
+        'Watchlist and holdings overview',
+        'Trade journal with entry/exit notes',
+        'Allocation and risk tracking',
+        'Dividend calendar and payout log',
+        'Weekly review and rebalance checklist',
+        'Market thesis and catalyst notes',
+      ],
+    };
+  }
+
   // ── Replica: Content Planner for TikTok & Instagram Influencers (Linda) ──
   if (title.includes('content planner for tiktok')) {
     return {

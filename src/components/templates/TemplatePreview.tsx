@@ -667,6 +667,47 @@ function InstagramIcon({ className }: { className?: string }) {
   );
 }
 
+function CandlestickIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <line x1="6" y1="3" x2="6" y2="21" />
+      <rect x="4.5" y="8" width="3" height="6" rx="0.8" fill="currentColor" stroke="none" />
+      <line x1="12" y1="4" x2="12" y2="20" />
+      <rect x="10.5" y="6" width="3" height="9" rx="0.8" fill="currentColor" stroke="none" />
+      <line x1="18" y1="2.5" x2="18" y2="21.5" />
+      <rect x="16.5" y="11" width="3" height="5.5" rx="0.8" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function PortfolioPieIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M12 3v9h9A9 9 0 0 0 12 3Z" fill="currentColor" stroke="none" />
+      <path d="M11 3.06a9 9 0 1 0 9.94 9.94H11V3.06Z" />
+    </svg>
+  );
+}
+
+function TrendingLineIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M3 17 9 11l4 4 8-8" />
+      <path d="M16 7h5v5" />
+      <path d="M3 21h18" />
+    </svg>
+  );
+}
+
+function RiskShieldIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M12 3 4.5 6v5.2c0 5.2 3.4 8.2 7.5 9.8 4.1-1.6 7.5-4.6 7.5-9.8V6L12 3Z" />
+      <path d="m9.2 12.2 1.8 1.8 3.8-3.8" />
+    </svg>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /*  Replica: Content Planner for TikTok & Instagram — real hero image, title, row of social icons */
 /* ------------------------------------------------------------------ */
@@ -697,6 +738,42 @@ function TikTokIGPreview({ config, template }: { config: ReturnType<typeof getTe
       {/* Row of social icons with labels */}
       <div className="grid grid-cols-4 gap-1.5 flex-shrink-0">
         {socialRow.map((item) => (
+          <div key={item.title} className="rounded-md border border-border/60 overflow-hidden bg-foreground/5 flex flex-col items-center justify-center p-1.5">
+            <item.Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${item.color}`} />
+            <span className="mt-0.5 text-[8px] text-foreground font-medium truncate w-full text-center">
+              {item.title}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const INVESTMENT_PORTFOLIO_HERO_IMAGE = 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80';
+
+function InvestmentPortfolioPreview({ template }: { template: Template }) {
+  const marketRow = [
+    { title: 'Stocks', Icon: CandlestickIcon, color: 'text-emerald-500' },
+    { title: 'ETF', Icon: PortfolioPieIcon, color: 'text-sky-500' },
+    { title: 'Trend', Icon: TrendingLineIcon, color: 'text-violet-500' },
+    { title: 'Risk', Icon: RiskShieldIcon, color: 'text-amber-500' },
+  ];
+
+  return (
+    <div className="space-y-3 h-full flex flex-col">
+      <div className="w-full rounded-lg overflow-hidden border border-border/60 flex-shrink-0 bg-muted">
+        <img
+          src={INVESTMENT_PORTFOLIO_HERO_IMAGE}
+          alt=""
+          className="w-full h-full object-cover min-h-[4.5rem] max-h-[7rem]"
+        />
+      </div>
+      <h2 className="text-sm sm:text-base font-bold text-foreground truncate flex-shrink-0">
+        {template.title}
+      </h2>
+      <div className="grid grid-cols-4 gap-1.5 flex-shrink-0">
+        {marketRow.map((item) => (
           <div key={item.title} className="rounded-md border border-border/60 overflow-hidden bg-foreground/5 flex flex-col items-center justify-center p-1.5">
             <item.Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${item.color}`} />
             <span className="mt-0.5 text-[8px] text-foreground font-medium truncate w-full text-center">
@@ -754,6 +831,68 @@ function UXResearchRepositoryLitePreview({ template }: { template: Template }) {
         {swatches.map((item) => (
           <div key={item.title} className="rounded-md border border-border/60 overflow-hidden bg-background/70">
             <div className={`h-8 ${item.tone}`} />
+            <div className="px-1 py-1 text-[8px] font-medium text-foreground truncate text-center">{item.title}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Sales Activity Log — same skeleton as UX Research Lite: sales hero image + big title + row of sales channel images */
+/* ------------------------------------------------------------------ */
+const SALES_ACTIVITY_HERO_IMAGE = 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80';
+const SALES_CHANNEL_IMAGES = [
+  { title: 'Website', src: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&q=80' },
+  { title: 'Email', src: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&q=80' },
+  { title: 'TikTok', src: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=400&q=80' },
+  { title: 'Others', src: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&q=80' },
+];
+
+function SalesActivityLogPreview({ template }: { template: Template }) {
+  return (
+    <div className="space-y-2.5 h-full flex flex-col">
+      <div className="w-full rounded-lg overflow-hidden border border-border/60 flex-shrink-0 bg-muted min-h-[4rem] max-h-[6rem]">
+        <img
+          src={SALES_ACTIVITY_HERO_IMAGE}
+          alt=""
+          className="w-full h-full object-cover min-h-[4rem] max-h-[6rem]"
+          onError={(e) => {
+            const t = e.currentTarget;
+            t.style.display = 'none';
+            const fallback = t.nextElementSibling as HTMLElement;
+            if (fallback) fallback.style.display = 'flex';
+          }}
+        />
+        <div
+          className="hidden w-full min-h-[4rem] max-h-[6rem] items-center justify-center bg-gradient-to-br from-sky-100 to-indigo-100 dark:from-sky-950/50 dark:to-indigo-950/40"
+          style={{ background: 'linear-gradient(135deg, #e0f2fe 0%, #e0e7ff 100%)' }}
+        >
+          <span className="text-sm font-bold text-sky-700/90 dark:text-sky-300/90">Sales</span>
+        </div>
+      </div>
+
+      <h2 className="text-base font-bold text-foreground leading-tight flex-shrink-0">
+        {template.title}
+      </h2>
+
+      <div className="grid grid-cols-4 gap-1.5 flex-shrink-0">
+        {SALES_CHANNEL_IMAGES.map((item) => (
+          <div key={item.title} className="rounded-md border border-border/60 overflow-hidden bg-background/70">
+            <div className="h-8 w-full bg-muted">
+              <img
+                src={item.src}
+                alt=""
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  const next = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (next) next.style.display = 'block';
+                }}
+              />
+              <div className="hidden h-8 w-full bg-gradient-to-b from-muted to-muted/80" />
+            </div>
             <div className="px-1 py-1 text-[8px] font-medium text-foreground truncate text-center">{item.title}</div>
           </div>
         ))}
@@ -964,7 +1103,7 @@ function StartupOSPreview({ config }: { config: ReturnType<typeof getTemplatePre
             <polyline
               fill="none"
               stroke="rgb(16, 185, 129)"
-              strokeWidth="12"
+              strokeWidth="4"
               strokeLinecap="round"
               strokeLinejoin="round"
               points={linePoints.slice(0, 7).map((p, i) => `${(i / 6) * 100},${100 - (p / maxLine) * 95}`).join(' ')}
@@ -1369,6 +1508,9 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
   const isReplicaTravelWish = template.title.toLowerCase().includes('travel bucket wish list');
   const isReplicaSocialPlanner = template.title.toLowerCase().includes('2026 social media');
   const isReplicaTikTokIG = template.title.toLowerCase().includes('content planner for tiktok');
+  const isInvestmentPortfolioLog =
+    template.title.toLowerCase().includes('investment & portfolio log') ||
+    (template.slug ?? '').toLowerCase().includes('investment-portfolio-log');
   const isReadingList = template.title.toLowerCase().includes('reading list');
   const isStudentLessonPlanner = template.title.toLowerCase().includes('student and lesson planner');
   const isMonthlyPlanner = template.title.toLowerCase().includes('monthly planner');
@@ -1377,8 +1519,11 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
   const isWeddingPlanning = template.title.toLowerCase().includes('wedding planning');
   const isConferenceAgenda = template.title.toLowerCase().includes('conference') && template.title.toLowerCase().includes('trip agenda');
   const isUXResearchRepositoryLite = template.title.toLowerCase().includes('ux research repository lite');
+  const isSalesActivityLog = template.title.toLowerCase().includes('sales activity log');
   const isContentCreatorKit = (template.slug ?? '').toLowerCase().includes('content-creator-kit') || template.title.toLowerCase().includes('content creator kit');
-  const isAnyFeatured = isFeaturedTarot || isFeaturedAI || isFeaturedTravel || isFeatured12Week || isReplicaTravelWish || isReplicaSocialPlanner || isReplicaTikTokIG || isReadingList || isStudentLessonPlanner || isMonthlyPlanner || isMyClassSchedule || isStartupOS || isWeddingPlanning || isConferenceAgenda || isUXResearchRepositoryLite;
+  const isSubscriptionRecurring = (template.slug ?? '').toLowerCase().includes('subscription-recurring-costs');
+  const isExpenseTracker2026 = (template.slug ?? '').toLowerCase().includes('expense-tracker-2026');
+  const isAnyFeatured = isFeaturedTarot || isFeaturedAI || isFeaturedTravel || isFeatured12Week || isReplicaTravelWish || isReplicaSocialPlanner || isReplicaTikTokIG || isInvestmentPortfolioLog || isReadingList || isStudentLessonPlanner || isMonthlyPlanner || isMyClassSchedule || isStartupOS || isWeddingPlanning || isConferenceAgenda || isUXResearchRepositoryLite || isSalesActivityLog;
 
   return (
     <div className={`relative w-full h-full ${variant === 'card' ? 'scale-[1.02]' : ''}`}>
@@ -1422,7 +1567,7 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
                 </>
               )}
             </div>
-            <div className={`px-2 py-0.5 rounded-full text-[10px] font-medium truncate ${isContentCreatorKit ? 'bg-amber-500/20 text-amber-200 border border-amber-500/40' : 'bg-foreground/5 text-muted-foreground border border-border/60'}`}>
+            <div className={`px-2 py-0.5 rounded-full text-[10px] font-medium truncate ${isContentCreatorKit ? 'bg-amber-500/20 text-amber-200 border border-amber-500/40' : isExpenseTracker2026 ? 'bg-amber-500/20 text-amber-100 border border-amber-400/40' : 'bg-foreground/5 text-muted-foreground border border-border/60'}`}>
               {config.badge}
             </div>
           </div>
@@ -1430,12 +1575,26 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
 
         {/* ── Body ── */}
         <div className={`flex ${isReadingList ? 'h-full' : 'h-[92%]'}`}>
-          {showSidebar && !isAnyFeatured ? (
+          {showSidebar && !isAnyFeatured && !isSubscriptionRecurring && !isExpenseTracker2026 ? (
             <aside className="hidden sm:flex flex-col w-28 border-r border-border/70 bg-background/80 px-2 py-3 gap-2">
               <div className="h-7 rounded-md bg-foreground/5" />
               <div className="space-y-1.5 mt-1">
                 {config.sidebarSections.map((section) => (
                   <div key={section} className="px-1.5 py-1 rounded-sm bg-foreground/5 text-[9px] text-muted-foreground truncate">
+                    {section}
+                  </div>
+                ))}
+              </div>
+            </aside>
+          ) : null}
+
+          {/* Expense Tracker 2026: light yellow sidebar for left-right layout */}
+          {isExpenseTracker2026 ? (
+            <aside className="hidden sm:flex flex-col w-28 border-r border-amber-500/25 bg-amber-950/35 px-2 py-3 gap-2 text-amber-100">
+              <div className="h-7 rounded-md bg-amber-900/45 border border-amber-500/25" />
+              <div className="space-y-1.5 mt-1">
+                {config.sidebarSections.map((section) => (
+                  <div key={section} className="px-1.5 py-1 rounded-sm bg-amber-900/35 border border-amber-500/25 text-[9px] text-amber-100/90 truncate">
                     {section}
                   </div>
                 ))}
@@ -1534,17 +1693,21 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
 
           <main
             className={`flex-1 px-4 py-3 overflow-hidden ${
-              isDashboardShell
-                ? 'bg-slate-900/80'
-                : isDocShell
-                  ? 'bg-zinc-900/70'
-                  : 'bg-background/95'
+              isSubscriptionRecurring
+                ? 'bg-emerald-950/70 text-emerald-100'
+                : isExpenseTracker2026
+                  ? 'bg-amber-950/30 text-amber-100 [&_.text-foreground]:text-amber-100 [&_.text-muted-foreground]:text-amber-200/75 [&_.bg-background\\/70]:bg-amber-900/35 [&_.bg-background\\/80]:bg-amber-900/45 [&_.border-border\\/60]:border-amber-500/25 [&_.border-border\\/70]:border-amber-500/30'
+                  : isDashboardShell
+                    ? 'bg-slate-900/80'
+                    : isDocShell
+                      ? 'bg-zinc-900/70'
+                      : 'bg-background/95'
             }`}
           >
             {/* Title header — category line and tags removed for all templates */}
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h3 className={`text-[11px] sm:text-xs font-semibold truncate max-w-[220px] ${isDashboardShell ? 'text-slate-100' : 'text-foreground'}`}>
+                <h3 className={`text-[11px] sm:text-xs font-semibold truncate max-w-[220px] ${isSubscriptionRecurring ? 'text-emerald-100' : isExpenseTracker2026 ? 'text-amber-100' : isDashboardShell ? 'text-slate-100' : 'text-foreground'}`}>
                   {template.title}
                 </h3>
               </div>
@@ -1588,6 +1751,9 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
             {/* ── UX Research Repository Lite ── */}
             {isUXResearchRepositoryLite ? <UXResearchRepositoryLitePreview template={template} /> : null}
 
+            {/* ── Sales Activity Log (same skeleton as UX Research Lite: sales image + title + channel row) ── */}
+            {isSalesActivityLog ? <SalesActivityLogPreview template={template} /> : null}
+
             {/* ── Replica: Travel Bucket Wish List custom body ── */}
             {isReplicaTravelWish ? <TravelWishPreview config={config} template={template} /> : null}
 
@@ -1596,6 +1762,9 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
 
             {/* ── Replica: TikTok & Instagram Content Planner custom body ── */}
             {isReplicaTikTokIG ? <TikTokIGPreview config={config} template={template} /> : null}
+
+            {/* ── Replica: Investment & Portfolio Log custom body ── */}
+            {isInvestmentPortfolioLog ? <InvestmentPortfolioPreview template={template} /> : null}
 
             {/* ── Generic skeletons (non-featured) ── */}
             {!isAnyFeatured && skeleton === 'dashboard' ? (
