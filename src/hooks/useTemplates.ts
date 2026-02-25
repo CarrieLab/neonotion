@@ -34,17 +34,56 @@ function mergeWithStaticTemplates(liveTemplates: Template[] | null | undefined):
   return merged.map(forceNoFeaturedTemplate);
 }
 
+function shouldFallbackToStatic(error: unknown): boolean {
+  if (error instanceof TypeError) return true;
+
+  const e = error as {
+    message?: unknown;
+    details?: unknown;
+    hint?: unknown;
+    cause?: unknown;
+  };
+  const cause = e?.cause as { message?: unknown } | undefined;
+
+  const msg = [
+    e?.message,
+    e?.details,
+    e?.hint,
+    cause?.message,
+    e?.cause,
+    error,
+  ]
+    .map((v) => (v == null ? '' : String(v)))
+    .join(' ')
+    .toLowerCase();
+
+  return (
+    msg.includes('failed to fetch') ||
+    msg.includes('err_name_not_resolved') ||
+    msg.includes('enotfound') ||
+    msg.includes('dns')
+  );
+}
+
 export function useTemplates() {
   return useQuery({
     queryKey: ['templates'],
+    retry: false,
     queryFn: async (): Promise<Template[]> => {
-      const { data, error } = await supabase
-        .from('templates')
-        .select('*')
-        .order('popularity_score', { ascending: false });
-      
-      if (error) throw error;
-      return mergeWithStaticTemplates(data as Template[] | null | undefined);
+      try {
+        const { data, error } = await supabase
+          .from('templates')
+          .select('*')
+          .order('popularity_score', { ascending: false });
+        
+        if (error) throw error;
+        return mergeWithStaticTemplates(data as Template[] | null | undefined);
+      } catch (error) {
+        if (!shouldFallbackToStatic(error)) {
+          console.warn('Falling back to static templates due to live fetch error:', error);
+        }
+        return mergeWithStaticTemplates([]);
+      }
     },
   });
 }
@@ -80,14 +119,25 @@ export function useTemplate(slug: string) {
 export function useFeaturedTemplates() {
   return useQuery({
     queryKey: ['templates', 'featured'],
+    retry: false,
     queryFn: async (): Promise<Template[]> => {
-      const { data, error } = await supabase
-        .from('templates')
-        .select('*')
-        .order('popularity_score', { ascending: false });
-      
-      if (error) throw error;
-      const merged = mergeWithStaticTemplates(data as Template[] | null | undefined);
+      let merged: Template[] = [];
+
+      try {
+        const { data, error } = await supabase
+          .from('templates')
+          .select('*')
+          .order('popularity_score', { ascending: false });
+        
+        if (error) throw error;
+        merged = mergeWithStaticTemplates(data as Template[] | null | undefined);
+      } catch (error) {
+        if (!shouldFallbackToStatic(error)) {
+          console.warn('Falling back to static featured templates due to live fetch error:', error);
+        }
+        merged = mergeWithStaticTemplates([]);
+      }
+
       const featured = merged.filter((t) => t.featured);
 
       // Explicit 6-slot layout for Featured grid (3 cols × 2 rows)
