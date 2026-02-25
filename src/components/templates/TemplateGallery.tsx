@@ -3,13 +3,200 @@ import { TemplateCard } from './TemplateCard';
 import { TemplateFilters } from './TemplateFilters';
 import { Template, SortOption } from '@/types/template';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getTemplatePreviewConfig } from '@/lib/template-previews';
 
 const PAGE_SIZE = 12;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const VISUAL_KEYWORDS = [
+  'beautiful',
+  'aesthetic',
+  'visual',
+  'design',
+  'dashboard',
+  'gallery',
+  'board',
+  'layout',
+  'style',
+];
+const HOMEPAGE_FEATURED_SLOTS: (string | null)[] = [
+  'tarot learning vault',
+  'ai engineering roadmap by data with baraa',
+  null,
+  'travel bucket list & wish list',
+  '12 week year planner',
+  'content planner for tiktok & instagram influencers',
+];
 
 interface TemplateGalleryProps {
   templates: Template[] | undefined;
   isLoading: boolean;
   showFilters?: boolean;
+}
+
+function getDaysAgo(dateIso: string): number {
+  const ts = new Date(dateIso).getTime();
+  if (Number.isNaN(ts)) return 9999;
+  return Math.max(0, (Date.now() - ts) / DAY_MS);
+}
+
+function getVisualSignalScore(template: Template): number {
+  const text = `${template.title} ${template.description} ${(template.whats_inside ?? []).join(' ')}`.toLowerCase();
+  const keywordHits = VISUAL_KEYWORDS.reduce((sum, keyword) => sum + (text.includes(keyword) ? 1 : 0), 0);
+  const mediaScore = (template.gallery_urls?.length ?? 0) * 1.8 + (template.thumbnail_url ? 3 : 0);
+  return Math.min(18, keywordHits * 2.4 + mediaScore);
+}
+
+function getPrimaryTag(template: Template): string {
+  return (template.tags?.[0] ?? 'other').toLowerCase();
+}
+
+function getSkeletonKey(template: Template): string {
+  return getTemplatePreviewConfig(template).skeleton ?? 'none';
+}
+
+function getBaseRankScore(template: Template): number {
+  const featuredBoost = template.featured ? 16 : 0;
+  const visualScore = getVisualSignalScore(template);
+  const freshnessScore = Math.max(0, 26 - getDaysAgo(template.created_at) * 0.6);
+  const popularityScore = (template.popularity_score ?? 0) * 0.45;
+  const ratingScore = (template.rating ?? 0) * 1.8;
+  return featuredBoost + visualScore + freshnessScore + popularityScore + ratingScore;
+}
+
+function getHomepageFeaturedSix(allTemplates: Template[]): Template[] {
+  const featured = allTemplates.filter((t) => t.featured);
+  const pinned = HOMEPAGE_FEATURED_SLOTS.map((name) =>
+    name ? featured.find((t) => t.title.toLowerCase().trim() === name) ?? null : null
+  );
+  const pinnedSet = new Set(HOMEPAGE_FEATURED_SLOTS.filter(Boolean));
+  const fillers = featured.filter((t) => !pinnedSet.has(t.title.toLowerCase().trim()));
+  let fillerIdx = 0;
+  return pinned.map((t) => t ?? fillers[fillerIdx++]).filter((t): t is Template => Boolean(t)).slice(0, 6);
+}
+
+function prioritizeHomepageFeatured(
+  sortedTemplates: Template[],
+  homepageFeaturedSix: Template[],
+  selectedTags: string[]
+): Template[] {
+  const homepageSet = new Set(homepageFeaturedSix.map((t) => t.slug));
+  const shouldPin = (template: Template) =>
+    selectedTags.length === 0 ||
+    template.tags.some((tag) => selectedTags.includes(tag));
+  const pinned = homepageFeaturedSix.filter(
+    (homepageTemplate) =>
+      homepageSet.has(homepageTemplate.slug) &&
+      sortedTemplates.some((t) => t.slug === homepageTemplate.slug) &&
+      shouldPin(homepageTemplate)
+  );
+  const pinnedSlugs = new Set(pinned.map((t) => t.slug));
+  const rest = sortedTemplates.filter((t) => !pinnedSlugs.has(t.slug));
+  return [...pinned, ...rest];
+}
+
+function reorderProjectManagementTemplates(input: Template[], selectedTags: string[]): Template[] {
+  const isProjectManagementOnly =
+    selectedTags.length === 1 && selectedTags[0].toLowerCase() === 'project management';
+  if (!isProjectManagementOnly) return input;
+
+  const reordered = [...input];
+  const roadmapSlug = 'project-roadmap-timeline-103';
+  const kanbanSlug = 'kanban-board-task-flow-104';
+
+  const roadmapIndex = reordered.findIndex((t) => t.slug === roadmapSlug);
+  if (roadmapIndex !== -1) {
+    const [roadmap] = reordered.splice(roadmapIndex, 1);
+    const targetIndex = Math.min(2, reordered.length);
+    reordered.splice(targetIndex, 0, roadmap);
+  }
+
+  const kanbanIndex = reordered.findIndex((t) => t.slug === kanbanSlug);
+  if (kanbanIndex !== -1) {
+    const [kanban] = reordered.splice(kanbanIndex, 1);
+    reordered.push(kanban);
+  }
+
+  return reordered;
+}
+
+function swapPersonalTemplatePositions(input: Template[], selectedTags: string[]): Template[] {
+  const isPersonalOnly = selectedTags.length === 1 && selectedTags[0].toLowerCase() === 'personal';
+  if (!isPersonalOnly) return input;
+
+  const reordered = [...input];
+  const weddingSlug = 'wedding-planning-hub-83';
+  const newYearSlug = 'new-year-resolutions-review-194';
+  const weddingIndex = reordered.findIndex((t) => t.slug === weddingSlug);
+  const newYearIndex = reordered.findIndex((t) => t.slug === newYearSlug);
+
+  if (weddingIndex === -1 || newYearIndex === -1 || weddingIndex === newYearIndex) {
+    return reordered;
+  }
+
+  [reordered[weddingIndex], reordered[newYearIndex]] = [reordered[newYearIndex], reordered[weddingIndex]];
+  return reordered;
+}
+
+function smartPopularSort(input: Template[]): Template[] {
+  const remaining = input.map((template) => ({
+    template,
+    base: getBaseRankScore(template),
+    skeleton: getSkeletonKey(template),
+    tag: getPrimaryTag(template),
+  }));
+  const result: Template[] = [];
+  const resultMeta: { skeleton: string; tag: string; featured: boolean }[] = [];
+  let featuredCount = 0;
+
+  while (remaining.length > 0) {
+    let bestIndex = 0;
+    let bestScore = -Infinity;
+
+    for (let i = 0; i < remaining.length; i++) {
+      const candidate = remaining[i];
+      let score = candidate.base;
+      const prev = resultMeta[resultMeta.length - 1];
+      const prev2 = resultMeta[resultMeta.length - 2];
+
+      if (prev) {
+        if (candidate.skeleton === prev.skeleton) score -= 10;
+        if (candidate.tag === prev.tag) score -= 4;
+        if (candidate.template.featured && prev.featured) score -= 12;
+      }
+
+      if (prev && prev2 && prev.featured && prev2.featured && candidate.template.featured) {
+        score -= 30;
+      }
+
+      if (candidate.template.featured) {
+        const projectedFeaturedRatio = (featuredCount + 1) / (result.length + 1);
+        if (projectedFeaturedRatio > 0.58) {
+          score -= (projectedFeaturedRatio - 0.58) * 140;
+        } else {
+          score += 3;
+        }
+      } else {
+        const currentRatio = result.length > 0 ? featuredCount / result.length : 0;
+        if (currentRatio > 0.45) score += 6;
+      }
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestIndex = i;
+      }
+    }
+
+    const [picked] = remaining.splice(bestIndex, 1);
+    result.push(picked.template);
+    resultMeta.push({
+      skeleton: picked.skeleton,
+      tag: picked.tag,
+      featured: picked.template.featured,
+    });
+    if (picked.template.featured) featuredCount += 1;
+  }
+
+  return result;
 }
 
 export function TemplateGallery({ templates, isLoading, showFilters = true }: TemplateGalleryProps) {
@@ -72,48 +259,10 @@ export function TemplateGallery({ templates, isLoading, showFilters = true }: Te
         break;
       case 'popular':
       default: {
-        // When no filters/sort applied, show featured templates first, then by popularity
-        const noFilters = !searchQuery && selectedTags.length === 0;
-        filtered.sort((a, b) => {
-          if (noFilters && (a.featured !== b.featured)) return a.featured ? -1 : 1;
-          return b.popularity_score - a.popularity_score;
-        });
-        if (noFilters) {
-          const takeByTitle = (titles: string[]): Template | null => {
-            const lowerTitles = new Set(titles.map((s) => s.toLowerCase()));
-            const idx = filtered.findIndex((t) => lowerTitles.has(t.title.toLowerCase().trim()));
-            if (idx < 0) return null;
-            return filtered.splice(idx, 1)[0];
-          };
-          const insertAt = (item: Template, index: number) => {
-            const clamped = Math.max(0, Math.min(index, filtered.length));
-            filtered.splice(clamped, 0, item);
-          };
-
-          // 1) Pin this template at page 2 slot 1 (index 12) in default gallery view.
-          const uxTemplate = takeByTitle(['ux research repository lite']);
-          if (uxTemplate) insertAt(uxTemplate, PAGE_SIZE);
-
-          // 2) Put Startup OS where Tax Prep currently is (replace its slot).
-          const startupTemplate = takeByTitle(['startup operating system', 'startup os']);
-          if (startupTemplate) {
-            const taxIndex = filtered.findIndex((t) => t.title.toLowerCase().trim() === 'tax prep & document checklist');
-            insertAt(startupTemplate, taxIndex >= 0 ? taxIndex : PAGE_SIZE);
-          }
-
-          // 3) Put Habit Tracker template at the very end.
-          const habitTrackerTemplate = takeByTitle(['habit tracker']);
-          if (habitTrackerTemplate) filtered.push(habitTrackerTemplate);
-
-          // 4) Keep original slugs, but swap display positions for these two templates.
-          const taxSlug = 'tax-prep-document-checklist-52';
-          const dateSlug = 'date-night-ideas-bank-192';
-          const taxIdx = filtered.findIndex((t) => t.slug === taxSlug);
-          const dateIdx = filtered.findIndex((t) => t.slug === dateSlug);
-          if (taxIdx >= 0 && dateIdx >= 0 && taxIdx !== dateIdx) {
-            [filtered[taxIdx], filtered[dateIdx]] = [filtered[dateIdx], filtered[taxIdx]];
-          }
-        }
+        filtered = smartPopularSort(filtered);
+        filtered = prioritizeHomepageFeatured(filtered, getHomepageFeaturedSix(templates), selectedTags);
+        filtered = reorderProjectManagementTemplates(filtered, selectedTags);
+        filtered = swapPersonalTemplatePositions(filtered, selectedTags);
         break;
       }
     }

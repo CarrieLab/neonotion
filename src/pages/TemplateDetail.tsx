@@ -26,7 +26,7 @@ const TemplateDetail = () => {
 
   const formatPrice = (cents: number | null) => {
     if (cents === null) return 'Free';
-    return `$${(cents / 100).toFixed(0)}`;
+    return `$${(cents / 100).toFixed(2)}`;
   };
 
   const handleApply = () => {

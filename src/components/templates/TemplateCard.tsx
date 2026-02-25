@@ -23,7 +23,7 @@ function isNoFeaturedByTitle(template: Template): boolean {
 export function TemplateCard({ template, index = 0 }: TemplateCardProps) {
   const formatPrice = (cents: number | null) => {
     if (cents === null) return 'Free';
-    return `$${(cents / 100).toFixed(0)}`;
+    return `$${(cents / 100).toFixed(2)}`;
   };
 
   const rating = typeof template.rating === 'number' ? template.rating : 4.9;
@@ -88,7 +88,14 @@ export function TemplateCard({ template, index = 0 }: TemplateCardProps) {
                 {getPriceBadge()}
               </div>
 
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+              <p
+                className="text-sm text-muted-foreground line-clamp-2 mb-3 overflow-hidden text-ellipsis"
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                }}
+              >
                 {template.description}
               </p>
 

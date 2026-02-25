@@ -3,6 +3,18 @@ import { supabase } from '@/integrations/supabase/client';
 import { Template } from '@/types/template';
 import { STATIC_TEMPLATES } from '@/lib/static-templates';
 
+const FORCE_FEATURED_SLUGS = new Set([
+  'product-roadmap-backlog-91',
+  'pet-care-vet-tracker-189',
+  'glossary-definitions-209',
+  'ai-engineering-skill-path-202',
+]);
+
+function forceFeaturedTemplate(t: Template): Template {
+  const slug = (t.slug ?? '').toLowerCase().trim();
+  return FORCE_FEATURED_SLUGS.has(slug) ? { ...t, featured: true } : t;
+}
+
 /** Never show Featured badge for Student Planner / Startup OS (by title). */
 function forceNoFeaturedTemplate(t: Template): Template {
   const lower = t.title.toLowerCase().trim();
@@ -12,6 +24,52 @@ function forceNoFeaturedTemplate(t: Template): Template {
     lower.includes('startup operating system') ||
     lower.includes('startup os');
   return noFeatured ? { ...t, featured: false } : t;
+}
+
+/** Runtime tag normalization for both live and static sources. */
+function normalizeTemplateTags(t: Template): Template {
+  const slug = (t.slug ?? '').toLowerCase();
+  const title = t.title.toLowerCase();
+  const nextTags = [...(t.tags ?? [])];
+  let changed = false;
+
+  // Rename Personal Finance category to Finance for consistent filtering.
+  const financeNormalized = nextTags.map((tag) =>
+    tag.toLowerCase() === 'personal finance' ? 'Finance' : tag,
+  );
+  if (financeNormalized.some((tag, idx) => tag !== nextTags[idx])) {
+    nextTags.length = 0;
+    nextTags.push(...financeNormalized);
+    changed = true;
+  }
+
+  // Remove Wedding category globally and map existing entries to Lifestyle.
+  if (nextTags.some((tag) => tag.toLowerCase() === 'wedding')) {
+    const withoutWedding = nextTags.filter((tag) => tag.toLowerCase() !== 'wedding');
+    nextTags.length = 0;
+    nextTags.push(...withoutWedding);
+    changed = true;
+    if (!nextTags.some((tag) => tag.toLowerCase() === 'lifestyle')) {
+      nextTags.push('Lifestyle');
+    }
+  }
+
+  // Bucket List & Life Goals should also appear under Travel.
+  const isBucketListLifeGoals =
+    slug.includes('bucket-list-life-goals') ||
+    (title.includes('bucket list') && title.includes('life goals'));
+  if (isBucketListLifeGoals && !nextTags.some((tag) => tag.toLowerCase() === 'travel')) {
+    nextTags.push('Travel');
+    changed = true;
+  }
+
+  // Product Roadmap Backlog should keep existing tags and also appear under Productivity.
+  if (slug === 'product-roadmap-backlog-91' && !nextTags.some((tag) => tag.toLowerCase() === 'productivity')) {
+    nextTags.push('Productivity');
+    changed = true;
+  }
+
+  return changed ? { ...t, tags: nextTags } : t;
 }
 
 function mergeWithStaticTemplates(liveTemplates: Template[] | null | undefined): Template[] {
@@ -31,7 +89,9 @@ function mergeWithStaticTemplates(liveTemplates: Template[] | null | undefined):
   merged.sort(
     (a, b) => (b.popularity_score ?? 0) - (a.popularity_score ?? 0),
   );
-  return merged.map(forceNoFeaturedTemplate);
+  return merged.map((t) =>
+    forceNoFeaturedTemplate(forceFeaturedTemplate(normalizeTemplateTags(t))),
+  );
 }
 
 function shouldFallbackToStatic(error: unknown): boolean {
@@ -101,14 +161,31 @@ export function useTemplate(slug: string) {
 
         if (error) {
           const staticT = STATIC_TEMPLATES.find((t) => t.slug === slug) ?? null;
-          if (staticT) return forceNoFeaturedTemplate(staticT);
+          if (staticT) return forceNoFeaturedTemplate(forceFeaturedTemplate(staticT));
           if (error.code === 'PGRST116') return null;
           throw error;
         }
-        return forceNoFeaturedTemplate(data as Template);
+        const liveTemplate = data as Template;
+        const staticTemplate = STATIC_TEMPLATES.find((t) => t.slug === slug) ?? null;
+
+        // Keep live data as source of truth, but backfill empty fields from static definitions.
+        const hydratedTemplate: Template = staticTemplate
+          ? {
+              ...staticTemplate,
+              ...liveTemplate,
+              description: liveTemplate.description || staticTemplate.description,
+              tags: (liveTemplate.tags ?? []).length > 0 ? liveTemplate.tags : staticTemplate.tags,
+              whats_inside:
+                (liveTemplate.whats_inside ?? []).length > 0
+                  ? liveTemplate.whats_inside
+                  : staticTemplate.whats_inside,
+            }
+          : liveTemplate;
+
+        return forceNoFeaturedTemplate(forceFeaturedTemplate(normalizeTemplateTags(hydratedTemplate)));
       } catch (_) {
         const staticT = STATIC_TEMPLATES.find((t) => t.slug === slug) ?? null;
-        if (staticT) return forceNoFeaturedTemplate(staticT);
+        if (staticT) return forceNoFeaturedTemplate(forceFeaturedTemplate(staticT));
         throw _;
       }
     },

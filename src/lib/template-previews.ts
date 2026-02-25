@@ -478,6 +478,7 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
   const kind = getPreviewKind(template);
   const seed = seeded(template);
   const title = template.title.toLowerCase();
+  const slug = (template.slug ?? '').toLowerCase();
 
   // ── Tax Prep & Document Checklist FIRST (Finance OS skeleton); match by slug or title ──
   const slugForTaxPrep = template.slug ?? '';
@@ -594,6 +595,47 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
     };
   }
 
+  // ── Study Habit Tracker (use Travel Bucket skeleton, study-themed content) ──
+  if ((template.slug ?? '').includes('study-habit-tracker') || title.includes('study habit tracker')) {
+    return {
+      layout: 'travel',
+      variant: seed % 12,
+      shell: 'minimal',
+      skeleton: 'featured-travel-bucket' as PreviewSkeleton,
+      category: 'Student',
+      badge: 'Study Habits',
+      accentGradient: 'linear-gradient(135deg,#60A5FA,#A78BFA)',
+      sidebarSections: ['All Habits', 'Planned', 'In Progress', 'Consistent', 'By Subject', 'By Time Block'],
+      tableHeaders: ['Habit', 'Subject', 'Status', 'Frequency'],
+      tableRows: [
+        { title: 'Pomodoro 4 cycles', meta: 'Math', status: 'In Progress', statusTone: 'blue' },
+        { title: 'Active recall quiz', meta: 'Biology', status: 'Consistent', statusTone: 'green' },
+        { title: 'Cornell notes review', meta: 'History', status: 'Planned', statusTone: 'amber' },
+        { title: 'Spaced repetition deck', meta: 'Chemistry', status: 'In Progress', statusTone: 'blue' },
+        { title: 'Reading block (45m)', meta: 'English', status: 'Consistent', statusTone: 'green' },
+        { title: 'Weekly reflection', meta: 'General', status: 'Planned', statusTone: 'purple' },
+      ],
+      boardColumns: [
+        { title: 'Planned', dotColor: '#A78BFA', cards: ['Cornell notes review', 'Weekly reflection'] },
+        { title: 'In Progress', dotColor: '#60A5FA', cards: ['Pomodoro 4 cycles', 'Spaced repetition deck'] },
+        { title: 'Consistent', dotColor: '#22C55E', cards: ['Active recall quiz', 'Reading block (45m)'] },
+      ],
+      kpis: [
+        { label: 'Habits', value: '18' },
+        { label: 'Consistent', value: '7' },
+        { label: 'Streak', value: '12 days' },
+      ],
+      notes: [
+        'Habit tracker by subject',
+        'Daily and weekly check-ins',
+        'Streak and consistency view',
+        'Time-block planning',
+        'Review and reflection prompts',
+        'Progress dashboard widgets',
+      ],
+    };
+  }
+
   // ── Student: Monthly Planner (top image + Minimal Planner title + month row) ──
   if (title.includes('monthly planner')) {
     return {
@@ -634,26 +676,134 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
     return { ...base, skeleton: 'doc-report' as PreviewSkeleton };
   }
 
-  // ── Startup Operating System (date filter + green line chart + blue/green dual bar) ──
-  if (title.includes('startup operating system') || title.includes('startup os')) {
+  // ── Startup Operating System skeleton family (date filter + green line + dual bar) ──
+  const isStartupOperatingSystem =
+    title.includes('startup operating system') || title.includes('startup os');
+  const isStepsActivityTracker = slug === 'steps-activity-tracker-168';
+  if (isStartupOperatingSystem || isStepsActivityTracker) {
     return {
       layout: 'timeline',
       variant: seed % 12,
       shell: 'dashboard',
       skeleton: 'startup-os' as PreviewSkeleton,
-      category: 'Business',
-      badge: 'Startup OS',
+      category: isStepsActivityTracker ? 'Fitness' : 'Business',
+      badge: isStepsActivityTracker ? 'Steps Tracker' : 'Startup OS',
       accentGradient: 'linear-gradient(135deg,#3B82F6,#22C55E)',
-      sidebarSections: ['Strategy', 'OKRs', 'Metrics', 'Meetings'],
-      chartLine: { points: [32, 45, 38, 52, 58, 65, 70] },
+      sidebarSections: isStepsActivityTracker
+        ? ['Daily Steps', 'Weekly Goal', 'Activity Types', 'Trends']
+        : ['Strategy', 'OKRs', 'Metrics', 'Meetings'],
+      chartLine: {
+        points: isStepsActivityTracker
+          ? [48, 54, 60, 72, 68, 76, 84]
+          : [32, 45, 38, 52, 58, 65, 70],
+      },
+      chartBarMulti: {
+        labels: isStepsActivityTracker
+          ? ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8']
+          : ['W1', 'W2', 'W3', 'W4'],
+        series: [
+          isStepsActivityTracker
+            ? { name: 'Steps', values: [62, 70, 76, 84, 88, 93, 97, 102] }
+            : { name: 'A', values: [40, 55, 48, 62] },
+          isStepsActivityTracker
+            ? { name: 'Active min', values: [38, 46, 52, 58, 62, 66, 71, 75] }
+            : { name: 'B', values: [28, 42, 50, 58] },
+          ...(isStepsActivityTracker
+            ? [
+                { name: 'Distance', values: [24, 29, 33, 36, 39, 42, 46, 49] },
+                { name: 'Floors', values: [12, 14, 16, 18, 19, 21, 23, 24] },
+              ]
+            : []),
+        ],
+      },
+      notes: isStepsActivityTracker
+        ? [
+            'Daily steps tracker with weekly trend',
+            'Activity minutes by week',
+            'Goal progress and consistency view',
+            'Walking and movement habit monitoring',
+          ]
+        : [],
+    };
+  }
+
+  // ── Side Income / Commission / Cash Flow: use filter-driven charts skeleton ──
+  if (
+    slug === 'side-income-freelance-log-55' ||
+    slug === 'commission-incentive-tracker-140' ||
+    slug === 'cash-flow-overview-58'
+  ) {
+    const isCommissionIncentive = slug === 'commission-incentive-tracker-140';
+    const isCashFlowOverview = slug === 'cash-flow-overview-58';
+    return {
+      layout: 'timeline',
+      variant: seed % 12,
+      shell: 'dashboard',
+      skeleton: 'startup-os' as PreviewSkeleton,
+      category: isCommissionIncentive ? 'CRM' : 'Finance',
+      badge: isCommissionIncentive ? 'Commission Tracker' : isCashFlowOverview ? 'Cash Flow' : 'Freelance Log',
+      accentGradient: isCommissionIncentive
+        ? 'linear-gradient(135deg,#232100,#3A3615)'
+        : isCashFlowOverview
+          ? 'linear-gradient(135deg,#062B30,#0F766E)'
+        : 'linear-gradient(135deg,#2563EB,#16A34A)',
+      sidebarSections: isCommissionIncentive
+        ? ['Dashboard', 'Deals', 'Reps', 'Payouts', 'Reports']
+        : isCashFlowOverview
+          ? ['Dashboard', 'Cash In', 'Cash Out', 'Recurring', 'Forecast']
+        : ['Dashboard', 'Income', 'Clients', 'Expenses', 'Reports'],
+      chartLine: {
+        points: isCommissionIncentive
+          ? [26, 33, 39, 45, 52, 60, 66]
+          : isCashFlowOverview
+            ? [34, 40, 37, 46, 52, 49, 58]
+            : [28, 34, 42, 48, 54, 61, 68],
+      },
       chartBarMulti: {
         labels: ['W1', 'W2', 'W3', 'W4'],
         series: [
-          { name: 'A', values: [40, 55, 48, 62] },
-          { name: 'B', values: [28, 42, 50, 58] },
+          isCommissionIncentive
+            ? { name: 'Commission', values: [30, 38, 45, 54] }
+            : isCashFlowOverview
+              ? { name: 'Inflow', values: [52, 58, 55, 63] }
+            : { name: 'Income', values: [40, 52, 58, 66] },
+          isCommissionIncentive
+            ? { name: 'Incentive', values: [14, 18, 21, 26] }
+            : isCashFlowOverview
+              ? { name: 'Outflow', values: [36, 39, 41, 44] }
+            : { name: 'Expense', values: [18, 22, 25, 29] },
         ],
       },
-      notes: [],
+      tableHeaders: isCommissionIncentive
+        ? ['Deal / Account', 'Payout', 'Status', 'Date']
+        : isCashFlowOverview
+          ? ['Cash Stream', 'Amount', 'Status', 'Date']
+        : ['Client / Project', 'Amount', 'Status', 'Date'],
+      tableRows: isCommissionIncentive
+        ? [
+            { title: 'ACME Renewal', meta: '$1,200', status: 'Paid', statusTone: 'green' },
+            { title: 'Northwind Expansion', meta: '$860', status: 'Approved', statusTone: 'blue' },
+            { title: 'Globex Upsell', meta: '$540', status: 'Pending', statusTone: 'amber' },
+            { title: 'Quarterly Bonus', meta: '$400', status: 'Incentive', statusTone: 'purple' },
+          ]
+        : isCashFlowOverview
+          ? [
+              { title: 'Client Receivables', meta: '$1,640', status: 'Expected', statusTone: 'blue' },
+              { title: 'Subscription Revenue', meta: '$980', status: 'Received', statusTone: 'green' },
+              { title: 'Payroll + Ops', meta: '$1,120', status: 'Scheduled', statusTone: 'amber' },
+              { title: 'Net Cash Position', meta: '+$740', status: 'Positive', statusTone: 'purple' },
+            ]
+        : [
+            { title: 'Website Retainer', meta: '$800', status: 'Paid', statusTone: 'green' },
+            { title: 'Brand Assets Pack', meta: '$520', status: 'Invoiced', statusTone: 'blue' },
+            { title: 'Content Sprint', meta: '$460', status: 'Pending', statusTone: 'amber' },
+            { title: 'Software Tools', meta: '$120', status: 'Expense', statusTone: 'purple' },
+          ],
+      notes: isCommissionIncentive
+        ? ['Deal commission', 'Rep ownership', 'Payout status', 'Monthly incentive']
+        : isCashFlowOverview
+          ? ['Cash inflow and outflow dashboard', 'Recurring expense tracking', 'Weekly variance analysis', 'Net cash projection']
+        : ['Income log', 'Client/project', 'Expenses', 'Monthly total'],
     };
   }
 
@@ -771,6 +921,17 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
     };
   }
 
+  // ── Bucket List & Life Goals: keep theme, use AI roadmap skeleton style ──
+  if ((template.slug ?? '').includes('bucket-list-life-goals') || (title.includes('bucket list') && title.includes('life goals'))) {
+    const base = buildProductivity(template, seed);
+    return {
+      ...base,
+      layout: 'content',
+      shell: 'doc',
+      sidebarSections: [],
+    };
+  }
+
   // ── Featured: AI Engineering Skill Path (roadmap with sidebar) ──
   if (title.includes('ai engineering')) {
     return {
@@ -861,49 +1022,137 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
     };
   }
 
-  // ── Newsletter & Email Content (use Travel Bucket skeleton style) ──
-  if (title.includes('newsletter') && title.includes('email content')) {
+  // ── Newsletter & Email Content family (shared skeleton with theme-specific content) ──
+  const isNewsletterEmail =
+    title.includes('newsletter') && title.includes('email content');
+  const isDateNightIdeasBank = slug === 'date-night-ideas-bank-192';
+  const isRfpResponseTracker = slug === 'rfp-response-tracker-138';
+  if (isNewsletterEmail || isDateNightIdeasBank || isRfpResponseTracker) {
+    const category = isDateNightIdeasBank
+      ? 'Lifestyle'
+      : isRfpResponseTracker
+        ? 'CRM'
+        : 'Creator';
+    const badge = isDateNightIdeasBank
+      ? 'Date Ideas'
+      : isRfpResponseTracker
+        ? 'RFP Tracker'
+        : 'Email Planner';
+    const sidebarSections = isDateNightIdeasBank
+      ? ['All Ideas', 'At Home', 'Outdoors', 'Budget-Friendly', 'Special Occasion', 'Tried']
+      : isRfpResponseTracker
+        ? ['All RFPs', 'Qualified', 'Drafting', 'Review', 'Submitted', 'Won']
+        : ['All Campaigns', 'Ideas', 'Drafting', 'Scheduled', 'Sent', 'Performance'];
+    const tableHeaders = isDateNightIdeasBank
+      ? ['Idea', 'Vibe', 'Status', 'When']
+      : isRfpResponseTracker
+        ? ['RFP', 'Client', 'Status', 'Deadline']
+        : ['Campaign', 'Audience', 'Status', 'Send Date'];
+    const tableRows = isDateNightIdeasBank
+      ? [
+          { title: 'Sunset picnic + playlist', meta: 'Romantic', status: 'Planned', statusTone: 'purple' as const },
+          { title: 'Cook a new recipe together', meta: 'At Home', status: 'This Week', statusTone: 'blue' as const },
+          { title: 'Game night challenge', meta: 'Cozy', status: 'Tried', statusTone: 'green' as const },
+          { title: 'Museum + coffee walk', meta: 'City Date', status: 'Idea', statusTone: 'amber' as const },
+          { title: 'No-phone conversation night', meta: 'Connection', status: 'Planned', statusTone: 'blue' as const },
+          { title: 'Mini road trip', meta: 'Adventure', status: 'Saved', statusTone: 'purple' as const },
+        ]
+      : isRfpResponseTracker
+        ? [
+            { title: 'Enterprise Security Platform', meta: 'NorthBridge Inc.', status: 'Drafting', statusTone: 'purple' as const },
+            { title: 'Data Migration Services', meta: 'Vertex Health', status: 'Review', statusTone: 'blue' as const },
+            { title: 'Cloud Cost Optimization', meta: 'Apex Retail', status: 'Submitted', statusTone: 'green' as const },
+            { title: 'Managed SOC Program', meta: 'Pioneer Bank', status: 'Qualified', statusTone: 'amber' as const },
+            { title: 'CRM Consolidation', meta: 'Summit Group', status: 'Drafting', statusTone: 'purple' as const },
+            { title: 'AI Support Copilot', meta: 'LumenCare', status: 'Won', statusTone: 'green' as const },
+          ]
+        : [
+            { title: 'Welcome Flow', meta: 'New Subscribers', status: 'Drafting', statusTone: 'purple' as const },
+            { title: 'Weekly Roundup', meta: 'All Subscribers', status: 'Scheduled', statusTone: 'blue' as const },
+            { title: 'Product Launch', meta: 'Interested Leads', status: 'Scheduled', statusTone: 'blue' as const },
+            { title: 'Abandoned Cart', meta: 'Cart Visitors', status: 'Idea', statusTone: 'amber' as const },
+            { title: 'Holiday Promo', meta: 'Segment A', status: 'Sent', statusTone: 'green' as const },
+            { title: 'Re-engagement', meta: 'Inactive List', status: 'Drafting', statusTone: 'purple' as const },
+          ];
+    const boardColumns = isDateNightIdeasBank
+      ? [
+          { title: 'Ideas', dotColor: '#A855F7', cards: ['Stargazing + hot cocoa', 'Bookstore + cafe date', 'DIY paint night'] },
+          { title: 'Planned', dotColor: '#3B82F6', cards: ['Sunset picnic', 'Museum + coffee walk'] },
+          { title: 'Tried', dotColor: '#22C55E', cards: ['Game night challenge', 'Home pasta night'] },
+        ]
+      : isRfpResponseTracker
+        ? [
+            { title: 'Qualified', dotColor: '#A855F7', cards: ['Managed SOC Program', 'Vendor onboarding checklist'] },
+            { title: 'Drafting', dotColor: '#3B82F6', cards: ['Enterprise Security Platform', 'CRM Consolidation'] },
+            { title: 'Submitted / Won', dotColor: '#22C55E', cards: ['Cloud Cost Optimization', 'AI Support Copilot'] },
+          ]
+        : [
+            { title: 'Ideas', dotColor: '#A855F7', cards: ['Black Friday teaser', 'Lead magnet follow-up', 'Monthly wins email'] },
+            { title: 'Drafting', dotColor: '#3B82F6', cards: ['Welcome Flow #2', 'Weekly Roundup #18'] },
+            { title: 'Sent', dotColor: '#22C55E', cards: ['Holiday Promo', 'Product Update #7'] },
+          ];
+    const kpis = isDateNightIdeasBank
+      ? [
+          { label: 'Ideas', value: '36' },
+          { label: 'Tried', value: '14' },
+          { label: 'This Weekend', value: '2 plans' },
+        ]
+      : isRfpResponseTracker
+        ? [
+            { label: 'Open RFPs', value: '9' },
+            { label: 'Submitted', value: '17' },
+            { label: 'Win Rate', value: '31%' },
+          ]
+        : [
+            { label: 'Campaigns', value: '24' },
+            { label: 'Sent', value: '11' },
+            { label: 'Next Send', value: 'Fri' },
+          ];
+    const notes = isDateNightIdeasBank
+      ? [
+          'Curated date-night idea bank',
+          'Mood and budget-friendly categorization',
+          'Plan and schedule upcoming dates',
+          'Track tried ideas and favorites',
+          'Quick inspiration prompts',
+          'Reusable weekly date templates',
+        ]
+      : isRfpResponseTracker
+        ? [
+            'RFP intake and qualification workflow',
+            'Section owners and due-date planning',
+            'Draft, review, and approval checkpoints',
+            'Submission tracker by client',
+            'Win/loss notes and follow-up actions',
+            'Reusable answer and compliance library',
+          ]
+        : [
+            'Campaign planner with statuses',
+            'Audience segmentation notes',
+            'Draft-to-send workflow',
+            'Weekly send cadence tracker',
+            'Performance follow-up checklist',
+            'Reusable campaign ideas bank',
+          ];
+
     return {
       layout: 'travel',
       variant: seed % 12,
       shell: 'minimal',
       skeleton: 'featured-travel-bucket' as PreviewSkeleton,
-      category: 'Creator',
-      badge: 'Email Planner',
+      category,
+      badge,
       accentGradient: 'linear-gradient(135deg,#06B6D4,#10B981)',
-      sidebarSections: ['All Campaigns', 'Ideas', 'Drafting', 'Scheduled', 'Sent', 'Performance'],
-      tableHeaders: ['Campaign', 'Audience', 'Status', 'Send Date'],
-      tableRows: [
-        { title: 'Welcome Flow', meta: 'New Subscribers', status: 'Drafting', statusTone: 'purple' },
-        { title: 'Weekly Roundup', meta: 'All Subscribers', status: 'Scheduled', statusTone: 'blue' },
-        { title: 'Product Launch', meta: 'Interested Leads', status: 'Scheduled', statusTone: 'blue' },
-        { title: 'Abandoned Cart', meta: 'Cart Visitors', status: 'Idea', statusTone: 'amber' },
-        { title: 'Holiday Promo', meta: 'Segment A', status: 'Sent', statusTone: 'green' },
-        { title: 'Re-engagement', meta: 'Inactive List', status: 'Drafting', statusTone: 'purple' },
-      ],
-      boardColumns: [
-        { title: 'Ideas', dotColor: '#A855F7', cards: ['Black Friday teaser', 'Lead magnet follow-up', 'Monthly wins email'] },
-        { title: 'Drafting', dotColor: '#3B82F6', cards: ['Welcome Flow #2', 'Weekly Roundup #18'] },
-        { title: 'Sent', dotColor: '#22C55E', cards: ['Holiday Promo', 'Product Update #7'] },
-      ],
-      kpis: [
-        { label: 'Campaigns', value: '24' },
-        { label: 'Sent', value: '11' },
-        { label: 'Next Send', value: 'Fri' },
-      ],
-      notes: [
-        'Campaign planner with statuses',
-        'Audience segmentation notes',
-        'Draft-to-send workflow',
-        'Weekly send cadence tracker',
-        'Performance follow-up checklist',
-        'Reusable campaign ideas bank',
-      ],
+      sidebarSections,
+      tableHeaders,
+      tableRows,
+      boardColumns,
+      kpis,
+      notes,
     };
   }
 
   // ── Content Creator Kit (soft orange theme) ──
-  const slug = (template.slug ?? '').toLowerCase();
   if (slug.includes('content-creator-kit') || title.includes('content creator kit')) {
     return {
       ...buildContent(template, seed),
@@ -964,87 +1213,305 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
     };
   }
 
-  // ── Replica: Travel Bucket Wish List (Lilian) ──
-  if (title.includes('travel bucket wish list')) {
+  // ── Strategic Initiatives Tracker: reuse 12-week skeleton with strategic content ──
+  const isStrategicInitiativesTracker =
+    slug === 'strategic-initiatives-tracker-102' || title.includes('strategic initiatives tracker');
+  if (isStrategicInitiativesTracker) {
+    return {
+      layout: 'timeline',
+      variant: seed % 12,
+      shell: 'app',
+      skeleton: 'featured-12week' as PreviewSkeleton,
+      category: 'Business',
+      badge: 'Strategic Cycle',
+      accentGradient: 'linear-gradient(135deg,#FFB6F3,#F9A8D4)',
+      sidebarSections: ['Strategy HQ', 'Initiatives', 'Week Plan', 'Dependencies', 'Scorecard', 'Review'],
+      milestones: [
+        { label: 'Wk 1–3', short: 'W1', position: '8%' },
+        { label: 'Wk 4–6', short: 'W4', position: '30%' },
+        { label: 'Wk 7–9', short: 'W7', position: '54%' },
+        { label: 'Wk 10–12', short: 'W10', position: '78%' },
+      ],
+      tableHeaders: ['Initiative', 'Owner', 'Status', 'Health'],
+      tableRows: [
+        { title: 'CRM migration rollout', meta: 'Revenue Ops', status: 'On Track', statusTone: 'green' },
+        { title: 'Pricing & packaging refresh', meta: 'Strategy', status: 'At Risk', statusTone: 'amber' },
+        { title: 'Partner channel expansion', meta: 'Sales', status: 'In Progress', statusTone: 'blue' },
+        { title: 'QBR operating cadence', meta: 'Leadership', status: 'Blocked', statusTone: 'purple' },
+      ],
+      kpis: [
+        { label: 'Week', value: '7 / 12' },
+        { label: 'On-Track Initiatives', value: '6 / 9' },
+        { label: 'Execution Score', value: '78%' },
+      ],
+      boardColumns: [
+        { title: 'This Week', dotColor: '#F472B6', cards: ['Resolve pricing dependency', 'Approve launch plan', 'Sync owner updates'] },
+        { title: 'Completed', dotColor: '#22C55E', cards: ['Baseline KPIs locked', 'Owner mapping finished'] },
+        { title: 'Blocked', dotColor: '#C084FC', cards: ['Legal review pending'] },
+      ],
+      notes: [
+        '12-week strategic initiative cycle view',
+        'Weekly execution planning by owner',
+        'Dependency and blocker visibility',
+        'Initiative health scorecard',
+        'Friday executive review template',
+        'Cycle reset checklist for next quarter',
+      ],
+    };
+  }
+
+  // ── Project Roadmap & Timeline: reuse 12-week planner style with soft pink theme ──
+  const isProjectRoadmapTimeline = slug === 'project-roadmap-timeline-103' || title.includes('project roadmap & timeline');
+  if (isProjectRoadmapTimeline) {
+    return {
+      layout: 'timeline',
+      variant: seed % 12,
+      shell: 'app',
+      skeleton: 'featured-12week' as PreviewSkeleton,
+      category: 'Business',
+      badge: 'Roadmap Timeline',
+      accentGradient: 'linear-gradient(135deg,#FBCFE8,#F9A8D4)',
+      sidebarSections: ['Roadmap', 'Milestones', 'Dependencies', 'Timeline', 'Owners', 'Status'],
+      milestones: [
+        { label: 'Kickoff', short: 'K', position: '8%' },
+        { label: 'Build', short: 'B', position: '30%' },
+        { label: 'Launch', short: 'L', position: '54%' },
+        { label: 'Scale', short: 'S', position: '78%' },
+      ],
+      tableHeaders: ['Initiative', 'Owner', 'Status', 'Target'],
+      tableRows: [
+        { title: 'Onboarding revamp', meta: 'Product', status: 'On Track', statusTone: 'green' },
+        { title: 'Mobile quick actions', meta: 'Engineering', status: 'In Progress', statusTone: 'blue' },
+        { title: 'Billing migration', meta: 'Platform', status: 'At Risk', statusTone: 'amber' },
+        { title: 'Insights dashboard', meta: 'Data', status: 'Planned', statusTone: 'purple' },
+      ],
+      kpis: [
+        { label: 'Milestones', value: '12' },
+        { label: 'On Track', value: '9' },
+        { label: 'Blocked', value: '2' },
+      ],
+      boardColumns: [
+        { title: 'This Sprint', dotColor: '#F472B6', cards: ['Finalize onboarding flow', 'Confirm migration cutover', 'QA timeline sign-off'] },
+        { title: 'Completed', dotColor: '#22C55E', cards: ['Milestone ownership mapped', 'Dependency matrix updated'] },
+        { title: 'Risks', dotColor: '#EC4899', cards: ['Vendor API delay'] },
+      ],
+      notes: [
+        'Roadmap timeline by phase and milestone',
+        'Owner and status tracking per initiative',
+        'Dependency visibility across workstreams',
+        'Weekly execution and risk review rhythm',
+        'Milestone checkpoint dashboard',
+        'Launch-readiness checklist',
+      ],
+    };
+  }
+
+  // ── Health Goals & Annual Check-Up: reuse roadmap timeline style with bright orange theme ──
+  const isHealthGoalsAnnualCheckup =
+    slug === 'health-goals-annual-check-up-177' ||
+    title.includes('health goals & annual check-up') ||
+    title.includes('health goals annual check-up');
+  if (isHealthGoalsAnnualCheckup) {
+    return {
+      layout: 'timeline',
+      variant: seed % 12,
+      shell: 'app',
+      skeleton: 'featured-12week' as PreviewSkeleton,
+      category: 'Health',
+      badge: 'Annual Health Plan',
+      accentGradient: 'linear-gradient(135deg,#FB923C,#F97316)',
+      sidebarSections: ['Health Goals', 'Check-Up Plan', 'Lab Timeline', 'Habits', 'Reminders', 'Progress'],
+      milestones: [
+        { label: 'Baseline', short: 'B', position: '8%' },
+        { label: 'Monitor', short: 'M', position: '30%' },
+        { label: 'Check-Up', short: 'C', position: '54%' },
+        { label: 'Optimize', short: 'O', position: '78%' },
+      ],
+      tableHeaders: ['Goal / Check', 'Owner', 'Status', 'Target'],
+      tableRows: [
+        { title: 'Annual blood panel', meta: 'Primary Care', status: 'Scheduled', statusTone: 'blue' },
+        { title: 'Cardio baseline test', meta: 'You', status: 'In Progress', statusTone: 'green' },
+        { title: 'Sleep quality review', meta: 'You', status: 'At Risk', statusTone: 'amber' },
+        { title: 'Nutrition adjustment', meta: 'Dietitian', status: 'Planned', statusTone: 'purple' },
+      ],
+      kpis: [
+        { label: 'Goals Active', value: '6' },
+        { label: 'Checks Booked', value: '4' },
+        { label: 'Habits On Track', value: '78%' },
+      ],
+      boardColumns: [
+        { title: 'This Week', dotColor: '#FB923C', cards: ['Book lab appointment', 'Log sleep for 7 days', 'Prep check-up questions'] },
+        { title: 'Completed', dotColor: '#22C55E', cards: ['Set baseline metrics', 'Update supplement log'] },
+        { title: 'Follow-up', dotColor: '#F97316', cards: ['Review bloodwork with doctor'] },
+      ],
+      notes: [
+        '12-week health goal and check-up roadmap',
+        'Baseline metrics and annual lab planning',
+        'Appointment and follow-up tracker',
+        'Habit consistency and risk visibility',
+        'Weekly health review rhythm',
+        'Post check-up optimization checklist',
+      ],
+    };
+  }
+
+  // ── Replica: Travel Bucket Wish List skeleton family ──
+  const isTravelBucketWishList = title.includes('travel bucket wish list');
+  const isPetCareVetTracker = slug === 'pet-care-vet-tracker-189';
+  const isPlacesToRevisit = slug.includes('places-to-revisit');
+  if (isTravelBucketWishList || isPetCareVetTracker || isPlacesToRevisit) {
     return {
       layout: 'travel',
       variant: seed % 12,
       shell: 'minimal',
       skeleton: 'featured-travel-wish' as PreviewSkeleton,
-      category: 'Travel',
-      badge: '🌍 Wish List',
+      category: isPetCareVetTracker ? 'Lifestyle' : 'Travel',
+      badge: isPetCareVetTracker ? '🐾 Pet Care' : isPlacesToRevisit ? '' : '🌍 Wish List',
       accentGradient: 'linear-gradient(135deg,#06B6D4,#22C55E)',
-      sidebarSections: ['All Places', 'Wish List', 'Planned', 'Visited', 'By Region'],
-      tableHeaders: ['Destination', 'Country', 'Status', 'Season'],
-      tableRows: [
-        { title: 'Amalfi Coast', meta: 'Italy', status: 'Wish List', statusTone: 'purple' },
-        { title: 'Tokyo', meta: 'Japan', status: 'Planned', statusTone: 'blue' },
-        { title: 'Queenstown', meta: 'New Zealand', status: 'Wish List', statusTone: 'purple' },
-        { title: 'Marrakech', meta: 'Morocco', status: 'Wish List', statusTone: 'amber' },
-        { title: 'Swiss Alps', meta: 'Switzerland', status: 'Visited', statusTone: 'green' },
-        { title: 'Havana', meta: 'Cuba', status: 'Wish List', statusTone: 'purple' },
-      ],
-      boardColumns: [
-        { title: 'Wish List', dotColor: '#A855F7', cards: ['Amalfi Coast', 'Queenstown', 'Marrakech', 'Havana'] },
-        { title: 'Planned', dotColor: '#3B82F6', cards: ['Tokyo', 'Cape Town'] },
-        { title: 'Visited', dotColor: '#22C55E', cards: ['Swiss Alps', 'Paris'] },
-      ],
-      kpis: [
-        { label: 'Wish List', value: '18' },
-        { label: 'Planned', value: '3' },
-        { label: 'Visited', value: '5' },
-      ],
-      notes: [
-        'Gallery with cover photos',
-        'Wish List → Planned → Visited',
-        'Filter by region & season',
-        'Budget & packing per trip',
-      ],
+      sidebarSections: isPetCareVetTracker
+        ? ['All Pets', 'Health Records', 'Vet Visits', 'Medications', 'Vaccines']
+        : ['All Places', 'Wish List', 'Planned', 'Visited', 'By Region'],
+      tableHeaders: isPetCareVetTracker
+        ? ['Pet', 'Next Care', 'Status', 'Date']
+        : ['Destination', 'Country', 'Status', 'Season'],
+      tableRows: isPetCareVetTracker
+        ? [
+            { title: 'Luna - Rabies booster', meta: 'Vaccination', status: 'Scheduled', statusTone: 'blue' },
+            { title: 'Milo - Wellness check', meta: 'Vet Visit', status: 'Upcoming', statusTone: 'purple' },
+            { title: 'Nori - Flea prevention', meta: 'Medication', status: 'Due Soon', statusTone: 'amber' },
+            { title: 'Coco - Dental cleaning', meta: 'Procedure', status: 'Planned', statusTone: 'purple' },
+            { title: 'Luna - Weight log', meta: 'Health Metric', status: 'Updated', statusTone: 'green' },
+            { title: 'Milo - Deworming', meta: 'Medication', status: 'Completed', statusTone: 'green' },
+          ]
+        : [
+            { title: 'Amalfi Coast', meta: 'Italy', status: 'Wish List', statusTone: 'purple' },
+            { title: 'Tokyo', meta: 'Japan', status: 'Planned', statusTone: 'blue' },
+            { title: 'Queenstown', meta: 'New Zealand', status: 'Wish List', statusTone: 'purple' },
+            { title: 'Marrakech', meta: 'Morocco', status: 'Wish List', statusTone: 'amber' },
+            { title: 'Swiss Alps', meta: 'Switzerland', status: 'Visited', statusTone: 'green' },
+            { title: 'Havana', meta: 'Cuba', status: 'Wish List', statusTone: 'purple' },
+          ],
+      boardColumns: isPetCareVetTracker
+        ? [
+            { title: 'Upcoming', dotColor: '#A855F7', cards: ['Milo wellness check', 'Coco dental cleaning'] },
+            { title: 'This Week', dotColor: '#3B82F6', cards: ['Luna rabies booster', 'Nori flea prevention'] },
+            { title: 'Completed', dotColor: '#22C55E', cards: ['Milo deworming', 'Luna weight check-in'] },
+          ]
+        : [
+            { title: 'Wish List', dotColor: '#A855F7', cards: ['Amalfi Coast', 'Queenstown', 'Marrakech', 'Havana'] },
+            { title: 'Planned', dotColor: '#3B82F6', cards: ['Tokyo', 'Cape Town'] },
+            { title: 'Visited', dotColor: '#22C55E', cards: ['Swiss Alps', 'Paris'] },
+          ],
+      kpis: isPetCareVetTracker
+        ? [
+            { label: 'Pets', value: '4' },
+            { label: 'Upcoming', value: '6' },
+            { label: 'Completed', value: '19' },
+          ]
+        : [
+            { label: 'Wish List', value: '18' },
+            { label: 'Planned', value: '3' },
+            { label: 'Visited', value: '5' },
+          ],
+      notes: isPetCareVetTracker
+        ? [
+            'Central pet profiles and records',
+            'Vet visit and vaccination timeline',
+            'Medication and preventive care tracker',
+            'Health metrics and follow-up reminders',
+          ]
+        : [
+            'Gallery with cover photos',
+            'Wish List → Planned → Visited',
+            'Filter by region & season',
+            'Budget & packing per trip',
+          ],
     };
   }
 
-  // ── Replica: The 2026 Social Media Content Planner (heyismail) ──
-  if (title.includes('2026 social media')) {
+  // ── Replica: The 2026 Social Media Content Planner skeleton family ──
+  const isSocialMediaPlanner2026 = title.includes('2026 social media');
+  const isProductRoadmapBacklog = slug === 'product-roadmap-backlog-91';
+  if (isSocialMediaPlanner2026 || isProductRoadmapBacklog) {
     return {
       layout: 'content',
       variant: seed % 12,
       shell: 'dashboard',
       skeleton: 'featured-social-planner' as PreviewSkeleton,
-      category: 'Event Planning',
-      badge: '📱 Social Planner',
-      accentGradient: 'linear-gradient(135deg,#8B5CF6,#EC4899)',
-      sidebarSections: ['Dashboard', 'All Posts', 'Calendar', 'Hashtag Bank', 'Analytics', 'Repurpose'],
-      tableHeaders: ['Content', 'Platform', 'Status', 'Date'],
-      tableRows: [
-        { title: 'Product launch reel', meta: 'Instagram', status: 'Scheduled', statusTone: 'green' },
-        { title: 'Behind the scenes', meta: 'TikTok', status: 'Draft', statusTone: 'blue' },
-        { title: 'Thread: 10 tips', meta: 'X / Twitter', status: 'Idea', statusTone: 'amber' },
-        { title: 'Carousel: case study', meta: 'LinkedIn', status: 'Published', statusTone: 'green' },
-        { title: 'Tutorial short', meta: 'YouTube Shorts', status: 'Draft', statusTone: 'blue' },
-      ],
-      boardColumns: [
-        { title: 'Ideas', dotColor: '#F59E0B', cards: ['Trend reaction', 'Q&A post', 'Meme format'] },
-        { title: 'In Production', dotColor: '#8B5CF6', cards: ['Tutorial reel', 'Carousel draft'] },
-        { title: 'Scheduled', dotColor: '#22C55E', cards: ['Launch reel', 'Newsletter promo'] },
-      ],
-      kpis: [
-        { label: 'This Week', value: '8 posts' },
-        { label: 'Scheduled', value: '12' },
-        { label: 'Published', value: '47' },
-      ],
+      category: isProductRoadmapBacklog ? 'Business' : 'Event Planning',
+      badge: isProductRoadmapBacklog ? '🗺️ Product Roadmap' : '📱 Social Planner',
+      accentGradient: isProductRoadmapBacklog
+        ? 'linear-gradient(135deg,#2563EB,#0EA5E9)'
+        : 'linear-gradient(135deg,#8B5CF6,#EC4899)',
+      sidebarSections: isProductRoadmapBacklog
+        ? ['Roadmap', 'Backlog', 'In Progress', 'Milestones', 'Dependencies', 'Releases']
+        : ['Dashboard', 'All Posts', 'Calendar', 'Hashtag Bank', 'Analytics', 'Repurpose'],
+      tableHeaders: isProductRoadmapBacklog
+        ? ['Initiative', 'Team', 'Status', 'Target']
+        : ['Content', 'Platform', 'Status', 'Date'],
+      tableRows: isProductRoadmapBacklog
+        ? [
+            { title: 'Unified search v2', meta: 'Product', status: 'In Progress', statusTone: 'blue' },
+            { title: 'Onboarding revamp', meta: 'Design', status: 'Planned', statusTone: 'amber' },
+            { title: 'Analytics dashboard', meta: 'Engineering', status: 'In Review', statusTone: 'purple' },
+            { title: 'Billing migration', meta: 'Platform', status: 'Shipped', statusTone: 'green' },
+            { title: 'Notification center', meta: 'Product', status: 'In Progress', statusTone: 'blue' },
+          ]
+        : [
+            { title: 'Product launch reel', meta: 'Instagram', status: 'Scheduled', statusTone: 'green' },
+            { title: 'Behind the scenes', meta: 'TikTok', status: 'Draft', statusTone: 'blue' },
+            { title: 'Thread: 10 tips', meta: 'X / Twitter', status: 'Idea', statusTone: 'amber' },
+            { title: 'Carousel: case study', meta: 'LinkedIn', status: 'Published', statusTone: 'green' },
+            { title: 'Tutorial short', meta: 'YouTube Shorts', status: 'Draft', statusTone: 'blue' },
+          ],
+      boardColumns: isProductRoadmapBacklog
+        ? [
+            { title: 'Backlog', dotColor: '#F59E0B', cards: ['SSO rollout', 'Mobile quick actions', 'Audit trail API'] },
+            { title: 'In Progress', dotColor: '#2563EB', cards: ['Unified search v2', 'Notification center'] },
+            { title: 'Shipped', dotColor: '#10B981', cards: ['Billing migration', 'Permissions matrix'] },
+          ]
+        : [
+            { title: 'Ideas', dotColor: '#F59E0B', cards: ['Trend reaction', 'Q&A post', 'Meme format'] },
+            { title: 'In Production', dotColor: '#8B5CF6', cards: ['Tutorial reel', 'Carousel draft'] },
+            { title: 'Scheduled', dotColor: '#22C55E', cards: ['Launch reel', 'Newsletter promo'] },
+          ],
+      kpis: isProductRoadmapBacklog
+        ? [
+            { label: 'Active Initiatives', value: '9' },
+            { label: 'In Progress', value: '4' },
+            { label: 'Shipped QTD', value: '13' },
+          ]
+        : [
+            { label: 'This Week', value: '8 posts' },
+            { label: 'Scheduled', value: '12' },
+            { label: 'Published', value: '47' },
+          ],
       calendarCells: Array.from({ length: 21 }).map((_, i) => ({
         day: i + 1,
-        label: i % 3 === 0 ? pick(['Reel', 'Post', 'Story', 'Short', 'Thread'], seed, i) : undefined,
+        label: i % 3 === 0
+          ? isProductRoadmapBacklog
+            ? pick(['Spec', 'Dev', 'QA', 'Release', 'Retro'], seed, i)
+            : pick(['Reel', 'Post', 'Story', 'Short', 'Thread'], seed, i)
+          : undefined,
         active: i % 2 === 0,
       })),
-      notes: [
-        'Multi-platform content database',
-        'Calendar & board views',
-        'Hashtag bank & caption drafts',
-        'Idea → Draft → Scheduled → Published',
-        'Weekly analytics snapshot',
-        'Repurpose tracker',
-      ],
+      notes: isProductRoadmapBacklog
+        ? [
+            'Roadmap timeline by quarter',
+            'Backlog prioritization workflow',
+            'Cross-team initiative ownership',
+            'Milestone and release planning',
+            'Dependency visibility board',
+            'Delivery status tracking',
+          ]
+        : [
+            'Multi-platform content database',
+            'Calendar & board views',
+            'Hashtag bank & caption drafts',
+            'Idea → Draft → Scheduled → Published',
+            'Weekly analytics snapshot',
+            'Repurpose tracker',
+          ],
     };
   }
 
@@ -1089,43 +1556,159 @@ export function getTemplatePreviewConfig(template: Template): TemplatePreviewCon
     };
   }
 
-  // ── Replica: Content Planner for TikTok & Instagram Influencers (Linda) ──
-  if (title.includes('content planner for tiktok')) {
+  // ── Replica: Content Planner for TikTok & Instagram skeleton family ──
+  const isTikTokIgPlanner = title.includes('content planner for tiktok');
+  const isGlossaryDefinitions = slug === 'glossary-definitions-209';
+  if (isTikTokIgPlanner || isGlossaryDefinitions) {
     return {
       layout: 'content',
       variant: seed % 12,
       shell: 'app',
       skeleton: 'featured-tiktok-ig' as PreviewSkeleton,
-      category: 'Creator',
-      badge: '🎬 TikTok & IG',
+      category: isGlossaryDefinitions ? 'Knowledge' : 'Creator',
+      badge: isGlossaryDefinitions ? '📚 Glossary Hub' : '🎬 TikTok & IG',
       accentGradient: 'linear-gradient(135deg,#EC4899,#F43F5E)',
-      sidebarSections: ['This Week', 'Content Bank', 'Reels', 'TikToks', 'Stories', 'Hashtags', 'Trending Audio'],
-      tableHeaders: ['Content', 'Type', 'Status', 'Platform'],
+      sidebarSections: isGlossaryDefinitions
+        ? ['All Terms', 'Core Concepts', 'By Topic', 'Needs Review', 'Examples', 'Sources']
+        : ['This Week', 'Content Bank', 'Reels', 'TikToks', 'Stories', 'Hashtags', 'Trending Audio'],
+      tableHeaders: isGlossaryDefinitions
+        ? ['Term', 'Domain', 'Status', 'Owner']
+        : ['Content', 'Type', 'Status', 'Platform'],
+      tableRows: isGlossaryDefinitions
+        ? [
+            { title: 'Embedding', meta: 'AI/ML', status: 'Reviewed', statusTone: 'green' },
+            { title: 'Vector Database', meta: 'Data', status: 'Draft', statusTone: 'blue' },
+            { title: 'Retrieval-Augmented Generation', meta: 'LLM', status: 'Needs Example', statusTone: 'amber' },
+            { title: 'Hallucination', meta: 'LLM', status: 'In Review', statusTone: 'purple' },
+            { title: 'Latency', meta: 'Systems', status: 'Reviewed', statusTone: 'green' },
+          ]
+        : [
+            { title: 'Morning routine reel', meta: 'Reel', status: 'Filmed', statusTone: 'green' },
+            { title: 'Get ready with me', meta: 'TikTok', status: 'Editing', statusTone: 'blue' },
+            { title: 'Weekly favorites', meta: 'Story', status: 'Captioned', statusTone: 'purple' },
+            { title: 'Outfit transition', meta: 'Reel + TikTok', status: 'Idea', statusTone: 'amber' },
+            { title: 'Day in my life', meta: 'TikTok', status: 'Scheduled', statusTone: 'green' },
+          ],
+      boardColumns: isGlossaryDefinitions
+        ? [
+            { title: 'New Terms', dotColor: '#F43F5E', cards: ['Retrieval reranking', 'Prompt injection'] },
+            { title: 'Review', dotColor: '#8B5CF6', cards: ['Vector Database', 'Hallucination'] },
+            { title: 'Published', dotColor: '#22C55E', cards: ['Embedding', 'Latency'] },
+          ]
+        : [
+            { title: 'Film', dotColor: '#F43F5E', cards: ['Outfit transition', 'Haul unboxing'] },
+            { title: 'Edit', dotColor: '#8B5CF6', cards: ['Get ready with me', 'Recipe clip'] },
+            { title: 'Caption', dotColor: '#F59E0B', cards: ['Weekly favorites'] },
+            { title: 'Schedule', dotColor: '#22C55E', cards: ['Morning routine', 'Day in my life'] },
+          ],
+      kpis: isGlossaryDefinitions
+        ? [
+            { label: 'Terms', value: '142' },
+            { label: 'Reviewed', value: '96' },
+            { label: 'Needs Update', value: '11' },
+          ]
+        : [
+            { label: 'This Week', value: '6 posts' },
+            { label: 'Filmed', value: '3' },
+            { label: 'Scheduled', value: '4' },
+          ],
+      notes: isGlossaryDefinitions
+        ? [
+            'Central glossary by domain and topic',
+            'Definition quality review workflow',
+            'Examples and usage notes per term',
+            'Owner and last-updated metadata',
+            'Cross-links to related concepts',
+            'Source and citation tracking',
+          ]
+        : [
+            'Weekly calendar for TikTok & IG',
+            'Content pillars & idea bank',
+            'Reel, Story & TikTok trackers',
+            'Hashtag sets & trending audio',
+            'Performance notes per post',
+            'Film → Edit → Caption → Schedule',
+          ],
+    };
+  }
+
+  // ── Travel Journal & Memories (use TikTok/IG skeleton, travel-themed content) ──
+  if ((template.slug ?? '').includes('travel-journal-memories') || (title.includes('travel journal') && title.includes('memories'))) {
+    return {
+      layout: 'content',
+      variant: seed % 12,
+      shell: 'app',
+      skeleton: 'featured-tiktok-ig' as PreviewSkeleton,
+      category: 'Travel',
+      badge: '🧳 Travel Journal',
+      accentGradient: 'linear-gradient(135deg,#06B6D4,#10B981)',
+      sidebarSections: ['This Trip', 'Places', 'Memories', 'Photos', 'Highlights', 'Wishlist', 'Reflections'],
+      tableHeaders: ['Memory', 'Location', 'Status', 'Type'],
       tableRows: [
-        { title: 'Morning routine reel', meta: 'Reel', status: 'Filmed', statusTone: 'green' },
-        { title: 'Get ready with me', meta: 'TikTok', status: 'Editing', statusTone: 'blue' },
-        { title: 'Weekly favorites', meta: 'Story', status: 'Captioned', statusTone: 'purple' },
-        { title: 'Outfit transition', meta: 'Reel + TikTok', status: 'Idea', statusTone: 'amber' },
-        { title: 'Day in my life', meta: 'TikTok', status: 'Scheduled', statusTone: 'green' },
+        { title: 'Sunrise at Batur', meta: 'Bali', status: 'Captured', statusTone: 'green' },
+        { title: 'Street food night', meta: 'Taipei', status: 'Writing', statusTone: 'blue' },
+        { title: 'Old town walk', meta: 'Prague', status: 'Planned', statusTone: 'amber' },
+        { title: 'Museum notes', meta: 'Paris', status: 'Drafted', statusTone: 'purple' },
+        { title: 'Cafe journal page', meta: 'Kyoto', status: 'Captured', statusTone: 'green' },
       ],
       boardColumns: [
-        { title: 'Film', dotColor: '#F43F5E', cards: ['Outfit transition', 'Haul unboxing'] },
-        { title: 'Edit', dotColor: '#8B5CF6', cards: ['Get ready with me', 'Recipe clip'] },
-        { title: 'Caption', dotColor: '#F59E0B', cards: ['Weekly favorites'] },
-        { title: 'Schedule', dotColor: '#22C55E', cards: ['Morning routine', 'Day in my life'] },
+        { title: 'Capture', dotColor: '#06B6D4', cards: ['Photo spots', 'Quick notes', 'Audio snippets'] },
+        { title: 'Curate', dotColor: '#10B981', cards: ['Best moments', 'Favorite meals', 'Route map'] },
+        { title: 'Reflect', dotColor: '#F59E0B', cards: ['Lessons learned', 'Top 3 highlights', 'Next trip ideas'] },
+        { title: 'Share', dotColor: '#A855F7', cards: ['Album draft', 'Travel story', 'Postcard notes'] },
       ],
       kpis: [
-        { label: 'This Week', value: '6 posts' },
-        { label: 'Filmed', value: '3' },
-        { label: 'Scheduled', value: '4' },
+        { label: 'Trips Logged', value: '9' },
+        { label: 'Memories', value: '47' },
+        { label: 'Next Stop', value: 'Lisbon' },
       ],
       notes: [
-        'Weekly calendar for TikTok & IG',
-        'Content pillars & idea bank',
-        'Reel, Story & TikTok trackers',
-        'Hashtag sets & trending audio',
-        'Performance notes per post',
-        'Film → Edit → Caption → Schedule',
+        'Timeline of trips and memories',
+        'Photo and link attachments',
+        'Favorite places tracker',
+        'Daily reflection prompts',
+        'Highlights and lessons learned',
+        'Wishlist for future destinations',
+      ],
+    };
+  }
+
+  // ── Board Meeting Pack (reuse Travel Journal visual skeleton, board-themed content) ──
+  if (slug === 'board-meeting-pack-93' || title.includes('board meeting pack')) {
+    return {
+      layout: 'content',
+      variant: seed % 12,
+      shell: 'app',
+      skeleton: 'featured-tiktok-ig' as PreviewSkeleton,
+      category: 'Business',
+      badge: 'Board Pack',
+      accentGradient: 'linear-gradient(135deg,#2563EB,#0EA5E9)',
+      sidebarSections: ['Agenda', 'Metrics', 'Highlights', 'Risks', 'Asks', 'Decisions', 'Follow-ups'],
+      tableHeaders: ['Section', 'Owner', 'Status', 'Board Focus'],
+      tableRows: [
+        { title: 'KPI Snapshot', meta: 'CEO', status: 'Ready', statusTone: 'green' },
+        { title: 'Financial Overview', meta: 'CFO', status: 'Draft', statusTone: 'blue' },
+        { title: 'Top Risks', meta: 'COO', status: 'Review', statusTone: 'amber' },
+        { title: 'Strategic Asks', meta: 'Founder', status: 'Pending', statusTone: 'purple' },
+      ],
+      boardColumns: [
+        { title: 'Metrics', dotColor: '#0EA5E9', cards: ['MRR & growth', 'Burn multiple', 'Runway update'] },
+        { title: 'Highlights', dotColor: '#22C55E', cards: ['Wins this quarter', 'Product milestones', 'Customer outcomes'] },
+        { title: 'Risks', dotColor: '#F59E0B', cards: ['Delivery risk', 'Hiring gap', 'Market pressure'] },
+        { title: 'Asks', dotColor: '#A855F7', cards: ['Budget approval', 'Hiring plan', 'Partner intro'] },
+      ],
+      kpis: [
+        { label: 'Agenda Items', value: '7' },
+        { label: 'Decision Points', value: '3' },
+        { label: 'Open Risks', value: '5' },
+      ],
+      notes: [
+        'Quarterly KPI and trend summary',
+        'Leadership highlights and blockers',
+        'Risk register with mitigations',
+        'Clear asks and decisions needed',
+        'Action owner and follow-up tracker',
+        'Board-ready narrative structure',
       ],
     };
   }

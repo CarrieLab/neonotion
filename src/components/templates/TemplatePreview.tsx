@@ -105,14 +105,35 @@ function TarotPreview({ config, template }: { config: ReturnType<typeof getTempl
 /*  AI Engineering Roadmap by Data With Baraa — hero image + title + article (no sidebar) */
 /* ------------------------------------------------------------------ */
 const AI_ROADMAP_HERO_IMAGE = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80';
+const BUCKET_LIST_HERO_IMAGE = 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=80';
+const GTD_TASK_SYSTEM_HERO_IMAGE = 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80';
+const TERRITORY_ACCOUNT_HERO_IMAGE = 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=900&q=80';
+const CAPSTONE_SHOWCASE_HERO_IMAGE = 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=900&q=80';
 
 function AIRoadmapPreview({ config, template }: { config: ReturnType<typeof getTemplatePreviewConfig>; template: Template }) {
+  const lowerTitle = template.title.toLowerCase();
+  const isBucketListLifeGoals =
+    (template.slug ?? '').toLowerCase().includes('bucket-list-life-goals') ||
+    (lowerTitle.includes('bucket list') && lowerTitle.includes('life goals'));
+  const heroImage = isBucketListLifeGoals ? BUCKET_LIST_HERO_IMAGE : AI_ROADMAP_HERO_IMAGE;
+  const sectionTitles = isBucketListLifeGoals
+    ? {
+        first: 'Vision & Life Areas',
+        second: 'Top Goals This Year',
+        third: 'Milestones & Next Actions',
+      }
+    : {
+        first: 'Overview & Prerequisites',
+        second: 'Phase 1: Foundations',
+        third: 'Phase 2: ML Core',
+      };
+
   return (
     <div className="space-y-3 h-full flex flex-col">
       {/* Top: AI-related image */}
       <div className="w-full rounded-lg overflow-hidden border border-border/60 flex-shrink-0 bg-muted">
         <img
-          src={AI_ROADMAP_HERO_IMAGE}
+          src={heroImage}
           alt=""
           className="w-full h-full object-cover min-h-[4rem] max-h-[6.5rem]"
         />
@@ -125,11 +146,11 @@ function AIRoadmapPreview({ config, template }: { config: ReturnType<typeof getT
       <div className="space-y-2 flex-1 min-h-0">
         <div className="rounded border border-border/60 bg-foreground/5 p-2">
           <div className="h-3 w-3/4 rounded-sm bg-foreground/20 mb-1.5" />
-          <div className="text-[10px] font-semibold text-foreground">Overview & Prerequisites</div>
+          <div className="text-[10px] font-semibold text-foreground">{sectionTitles.first}</div>
         </div>
         <div className="rounded border border-border/60 bg-foreground/5 p-2">
           <div className="h-3 w-2/3 rounded-sm bg-foreground/20 mb-1.5" />
-          <div className="text-[10px] font-semibold text-foreground">Phase 1: Foundations</div>
+          <div className="text-[10px] font-semibold text-foreground">{sectionTitles.second}</div>
         </div>
         <div className="rounded border border-border/60 bg-foreground/5 p-2">
           <div className="h-2.5 w-full rounded-sm bg-foreground/10 mb-1" />
@@ -138,7 +159,7 @@ function AIRoadmapPreview({ config, template }: { config: ReturnType<typeof getT
         </div>
         <div className="rounded border border-border/60 bg-foreground/5 p-2">
           <div className="h-3 w-1/2 rounded-sm bg-foreground/20 mb-1.5" />
-          <div className="text-[10px] font-semibold text-foreground">Phase 2: ML Core</div>
+          <div className="text-[10px] font-semibold text-foreground">{sectionTitles.third}</div>
         </div>
       </div>
     </div>
@@ -208,7 +229,11 @@ function TravelBucketPreview({ config, template }: { config: ReturnType<typeof g
   const rows = config.tableRows ?? [];
   const cols = config.boardColumns ?? [];
   const lowerTitle = template.title.toLowerCase();
-  const isNewsletterEmail = lowerTitle.includes('newsletter') && lowerTitle.includes('email content');
+  const lowerSlug = (template.slug ?? '').toLowerCase();
+  const isNewsletterEmail =
+    (lowerTitle.includes('newsletter') && lowerTitle.includes('email content')) ||
+    lowerSlug === 'date-night-ideas-bank-192' ||
+    lowerSlug === 'rfp-response-tracker-138';
 
   // Destination cover gradients to simulate travel photos
   const coverGradients = isNewsletterEmail ? [
@@ -296,11 +321,57 @@ function TravelBucketPreview({ config, template }: { config: ReturnType<typeof g
 /* ------------------------------------------------------------------ */
 /*  Featured: 12 Week Year Planner                                     */
 /* ------------------------------------------------------------------ */
-function TwelveWeekPreview({ config }: { config: ReturnType<typeof getTemplatePreviewConfig>; template: Template }) {
+function TwelveWeekPreview({ config, template }: { config: ReturnType<typeof getTemplatePreviewConfig>; template: Template }) {
   const rows = config.tableRows ?? [];
   const kpis = config.kpis ?? [];
   const milestones = config.milestones ?? [];
   const sprints = config.boardColumns ?? [];
+  const lowerSlug = (template.slug ?? '').toLowerCase();
+  const isProjectRoadmapTimeline = lowerSlug === 'project-roadmap-timeline-103';
+  const isHealthGoalsAnnualCheckup = lowerSlug === 'health-goals-annual-check-up-177';
+  const isPink12WeekStyle =
+    lowerSlug === 'strategic-initiatives-tracker-102' || isProjectRoadmapTimeline;
+  const isOrange12WeekStyle = isHealthGoalsAnnualCheckup;
+  const kpiPanelClass = isPink12WeekStyle
+    ? 'rounded-lg border border-pink-400/30 bg-pink-950/35 p-2'
+    : isOrange12WeekStyle
+      ? 'rounded-lg border border-orange-400/35 bg-orange-950/35 p-2'
+      : 'rounded-lg border border-amber-500/30 bg-amber-950/40 p-2';
+  const kpiLabelClass = isPink12WeekStyle
+    ? 'text-[8px] text-pink-200/75'
+    : isOrange12WeekStyle
+      ? 'text-[8px] text-orange-200/80'
+      : 'text-[8px] text-amber-300/70';
+  const kpiValueClass = isPink12WeekStyle
+    ? 'text-[11px] text-pink-100 font-semibold'
+    : isOrange12WeekStyle
+      ? 'text-[11px] text-orange-100 font-semibold'
+      : 'text-[11px] text-amber-100 font-semibold';
+  const weekMetaClass = isPink12WeekStyle
+    ? 'text-[8px] text-pink-200/75'
+    : isOrange12WeekStyle
+      ? 'text-[8px] text-orange-200/80'
+      : 'text-[8px] text-amber-300/70';
+  const weekMarkerClass = isPink12WeekStyle
+    ? 'text-pink-200 font-bold'
+    : isOrange12WeekStyle
+      ? 'text-orange-200 font-bold'
+      : 'text-amber-300 font-bold';
+  const fridayPanelClass = isPink12WeekStyle
+    ? 'col-span-2 rounded-lg border border-pink-400/20 bg-pink-950/25 p-2'
+    : isOrange12WeekStyle
+      ? 'col-span-2 rounded-lg border border-orange-400/25 bg-orange-950/25 p-2'
+      : 'col-span-2 rounded-lg border border-amber-500/20 bg-amber-950/25 p-2';
+  const fridayTitleClass = isPink12WeekStyle
+    ? 'text-[8px] text-pink-200/70 mb-1'
+    : isOrange12WeekStyle
+      ? 'text-[8px] text-orange-200/80 mb-1'
+      : 'text-[8px] text-amber-300/60 mb-1';
+  const fridayArrowClass = isPink12WeekStyle
+    ? 'text-[7px] text-pink-300 mt-0.5'
+    : isOrange12WeekStyle
+      ? 'text-[7px] text-orange-300 mt-0.5'
+      : 'text-[7px] text-amber-400 mt-0.5';
 
   // Weekly scorecard bar heights (simulate 12 weeks of execution scores)
   const weekScores = [75, 82, 68, 90, 85, 78, 88, 0, 0, 0, 0, 0];
@@ -310,9 +381,9 @@ function TwelveWeekPreview({ config }: { config: ReturnType<typeof getTemplatePr
       {/* KPIs */}
       <div className="grid grid-cols-3 gap-2">
         {kpis.map((kpi) => (
-          <div key={kpi.label} className="rounded-lg border border-amber-500/30 bg-amber-950/40 p-2">
-            <div className="text-[8px] text-amber-300/70">{kpi.label}</div>
-            <div className="text-[11px] text-amber-100 font-semibold">{kpi.value}</div>
+          <div key={kpi.label} className={kpiPanelClass}>
+            <div className={kpiLabelClass}>{kpi.label}</div>
+            <div className={kpiValueClass}>{kpi.value}</div>
           </div>
         ))}
       </div>
@@ -321,16 +392,26 @@ function TwelveWeekPreview({ config }: { config: ReturnType<typeof getTemplatePr
       <div className="rounded-lg border border-border/70 bg-foreground/5 p-2.5">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[9px] text-muted-foreground font-medium">Weekly Scorecard</span>
-          <span className="text-[8px] text-amber-300/70">Week 7 of 12</span>
+          <span className={weekMetaClass}>Week 7 of 12</span>
         </div>
         <div className="flex items-end gap-[3px] h-12">
           {weekScores.map((score, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+            <div key={i} className="relative flex-1 flex flex-col items-center gap-0.5">
               <span
                 className={`w-full rounded-t-sm ${i < 7 ? (score >= 80 ? 'bg-emerald-500/60' : 'bg-amber-500/50') : 'bg-foreground/10'}`}
                 style={{ height: `${score > 0 ? score * 0.9 : 8}%` }}
               />
-              <span className={`text-[5px] ${i === 6 ? 'text-amber-300 font-bold' : 'text-muted-foreground'}`}>{i + 1}</span>
+              {((isProjectRoadmapTimeline || isHealthGoalsAnnualCheckup) && i < 7 && score > 0) ? (
+                <span
+                  className={`absolute h-1.5 w-1.5 rounded-full ring-1 ${
+                    isHealthGoalsAnnualCheckup
+                      ? 'bg-orange-300 ring-orange-200/70'
+                      : 'bg-pink-300 ring-pink-200/70'
+                  }`}
+                  style={{ left: '50%', bottom: `calc(${score * 0.9}% + 8px)`, transform: 'translateX(-50%)' }}
+                />
+              ) : null}
+              <span className={`text-[5px] ${i === 6 ? weekMarkerClass : 'text-muted-foreground'}`}>{i + 1}</span>
             </div>
           ))}
         </div>
@@ -387,11 +468,11 @@ function TwelveWeekPreview({ config }: { config: ReturnType<typeof getTemplatePr
             </div>
           ))}
         </div>
-        <div className="col-span-2 rounded-lg border border-amber-500/20 bg-amber-950/25 p-2">
-          <div className="text-[8px] text-amber-300/60 mb-1">Friday Review</div>
+        <div className={fridayPanelClass}>
+          <div className={fridayTitleClass}>Friday Review</div>
           {['What went well?', 'What to improve?', 'Next week focus'].map((q) => (
             <div key={q} className="flex items-start gap-1 mb-0.5">
-              <span className="text-[7px] text-amber-400 mt-0.5">›</span>
+              <span className={fridayArrowClass}>›</span>
               <span className="text-[7px] text-foreground">{q}</span>
             </div>
           ))}
@@ -502,41 +583,91 @@ function StudentLessonPlannerPreview({ config, template }: { config: ReturnType<
 /* ------------------------------------------------------------------ */
 /*  Replica: Travel Bucket Wish List (Lilian-style)                    */
 /* ------------------------------------------------------------------ */
-function TravelWishPreview({ config }: { config: ReturnType<typeof getTemplatePreviewConfig>; template: Template }) {
+function TravelWishPreview({ config, template }: { config: ReturnType<typeof getTemplatePreviewConfig>; template: Template }) {
   const rows = config.tableRows ?? [];
   const kpis = config.kpis ?? [];
   const cols = config.boardColumns ?? [];
-  const covers = [
-    'linear-gradient(135deg,#38BDF8,#2563EB)',
-    'linear-gradient(135deg,#F472B6,#FB923C)',
-    'linear-gradient(135deg,#34D399,#059669)',
-    'linear-gradient(135deg,#FBBF24,#EF4444)',
-    'linear-gradient(135deg,#A78BFA,#6366F1)',
-    'linear-gradient(135deg,#67E8F9,#22D3EE)',
-  ];
-  const icons = ['🏖️', '🗼', '🏔️', '🕌', '🏔️', '🌴'];
+  const slug = (template.slug ?? '').toLowerCase();
+  const isStudyHabitTracker =
+    slug.includes('study-habit-tracker') ||
+    template.title.toLowerCase().includes('study habit tracker');
+  const isPetCareVetTracker = slug === 'pet-care-vet-tracker-189';
+  const isPlacesToRevisit = slug.includes('places-to-revisit');
+  const covers = isStudyHabitTracker
+    ? [
+        'linear-gradient(135deg,#60A5FA,#2563EB)',
+        'linear-gradient(135deg,#A78BFA,#7C3AED)',
+        'linear-gradient(135deg,#34D399,#059669)',
+        'linear-gradient(135deg,#FBBF24,#F59E0B)',
+        'linear-gradient(135deg,#67E8F9,#0EA5E9)',
+        'linear-gradient(135deg,#C4B5FD,#8B5CF6)',
+      ]
+    : isPetCareVetTracker
+      ? [
+          'linear-gradient(135deg,#34D399,#059669)',
+          'linear-gradient(135deg,#22C55E,#16A34A)',
+          'linear-gradient(135deg,#10B981,#0EA5E9)',
+          'linear-gradient(135deg,#84CC16,#22C55E)',
+          'linear-gradient(135deg,#14B8A6,#10B981)',
+          'linear-gradient(135deg,#4ADE80,#059669)',
+        ]
+    : [
+        'linear-gradient(135deg,#38BDF8,#2563EB)',
+        'linear-gradient(135deg,#F472B6,#FB923C)',
+        'linear-gradient(135deg,#34D399,#059669)',
+        'linear-gradient(135deg,#FBBF24,#EF4444)',
+        'linear-gradient(135deg,#A78BFA,#6366F1)',
+        'linear-gradient(135deg,#67E8F9,#22D3EE)',
+      ];
+  const icons = isStudyHabitTracker
+    ? ['📘', '🧠', '📝', '⏱️', '📚', '🎯']
+    : isPetCareVetTracker
+      ? ['🐶', '🐱', '💉', '🩺', '💊', '🦴']
+      : ['🏖️', '🗼', '🏔️', '🕌', '🏔️', '🌴'];
+  const kpiClass = isStudyHabitTracker
+    ? 'rounded-lg border border-sky-500/30 bg-sky-950/40 p-2'
+    : isPetCareVetTracker
+      ? 'rounded-lg border border-emerald-500/30 bg-emerald-950/40 p-2'
+    : 'rounded-lg border border-teal-500/30 bg-teal-950/40 p-2';
+  const kpiLabelClass = isStudyHabitTracker
+    ? 'text-[8px] text-sky-300/70'
+    : isPetCareVetTracker
+      ? 'text-[8px] text-emerald-300/70'
+      : 'text-[8px] text-teal-300/70';
+  const kpiValueClass = isStudyHabitTracker
+    ? 'text-[11px] text-sky-100 font-semibold'
+    : isPetCareVetTracker
+      ? 'text-[11px] text-emerald-100 font-semibold'
+      : 'text-[11px] text-teal-100 font-semibold';
+  const galleryTitle = isStudyHabitTracker ? 'All Habits' : isPetCareVetTracker ? 'All Pets' : 'All Places';
+  const activeTabClass = isStudyHabitTracker
+    ? 'bg-sky-600/25 border-sky-500/40 text-sky-200'
+    : isPetCareVetTracker
+      ? 'bg-emerald-600/25 border-emerald-500/40 text-emerald-200'
+    : 'bg-teal-600/25 border-teal-500/40 text-teal-200';
+  const tabs = isStudyHabitTracker || isPetCareVetTracker ? ['Grid', 'Board', 'List'] : ['Gallery', 'Board', 'List'];
 
   return (
     <div className="space-y-2.5 h-full">
       <div className="grid grid-cols-3 gap-2">
         {kpis.map((kpi) => (
-          <div key={kpi.label} className="rounded-lg border border-teal-500/30 bg-teal-950/40 p-2">
-            <div className="text-[8px] text-teal-300/70">{kpi.label}</div>
-            <div className="text-[11px] text-teal-100 font-semibold">{kpi.value}</div>
+          <div key={kpi.label} className={kpiClass}>
+            <div className={kpiLabelClass}>{kpi.label}</div>
+            <div className={kpiValueClass}>{kpi.value}</div>
           </div>
         ))}
       </div>
       <div className="rounded-lg border border-border/70 bg-foreground/5 p-2">
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[9px] text-muted-foreground font-medium">All Places</span>
+          <span className="text-[9px] text-muted-foreground font-medium">{galleryTitle}</span>
           <div className="flex gap-1">
-            {['Gallery', 'Board', 'List'].map((v) => (
-              <span key={v} className={`px-1.5 py-0.5 text-[7px] rounded border ${v === 'Gallery' ? 'bg-teal-600/25 border-teal-500/40 text-teal-200' : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}>{v}</span>
+            {tabs.map((v, i) => (
+              <span key={v} className={`px-1.5 py-0.5 text-[7px] rounded border ${i === 0 ? activeTabClass : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}>{v}</span>
             ))}
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-1.5">
-          {rows.slice(0, 6).map((row, i) => (
+        <div className={isPlacesToRevisit ? 'grid grid-cols-2 gap-1.5' : 'grid grid-cols-3 gap-1.5'}>
+          {rows.slice(0, isPlacesToRevisit ? 2 : 6).map((row, i) => (
             <div key={row.title} className="rounded-md border border-border/60 bg-background/70 overflow-hidden">
               <div className="h-7 w-full flex items-center justify-center text-sm" style={{ background: covers[i % covers.length] }}>{icons[i % icons.length]}</div>
               <div className="p-1.5">
@@ -569,13 +700,21 @@ function TravelWishPreview({ config }: { config: ReturnType<typeof getTemplatePr
 /* ------------------------------------------------------------------ */
 /*  Replica: The 2026 Social Media Content Planner (heyismail-style)   */
 /* ------------------------------------------------------------------ */
-function SocialPlannerPreview({ config }: { config: ReturnType<typeof getTemplatePreviewConfig>; template: Template }) {
+function SocialPlannerPreview({ config, template }: { config: ReturnType<typeof getTemplatePreviewConfig>; template: Template }) {
   const rows = config.tableRows ?? [];
   const kpis = config.kpis ?? [];
   const cols = config.boardColumns ?? [];
   const calCells = config.calendarCells ?? [];
+  const lowerSlug = (template.slug ?? '').toLowerCase();
+  const isProductRoadmap = lowerSlug === 'product-roadmap-backlog-91';
 
   const platformColor = (p: string) => {
+    if (isProductRoadmap) {
+      if (p.includes('Engineering')) return 'bg-blue-500/20 text-blue-200 border-blue-400/30';
+      if (p.includes('Product')) return 'bg-cyan-500/20 text-cyan-200 border-cyan-400/30';
+      if (p.includes('Design')) return 'bg-violet-500/20 text-violet-200 border-violet-400/30';
+      if (p.includes('Platform')) return 'bg-emerald-500/20 text-emerald-200 border-emerald-400/30';
+    }
     if (p.includes('Instagram')) return 'bg-pink-500/20 text-pink-200 border-pink-400/30';
     if (p.includes('TikTok')) return 'bg-slate-500/20 text-slate-200 border-slate-400/30';
     if (p.includes('YouTube')) return 'bg-red-500/20 text-red-200 border-red-400/30';
@@ -587,9 +726,9 @@ function SocialPlannerPreview({ config }: { config: ReturnType<typeof getTemplat
     <div className="space-y-2.5 h-full">
       <div className="grid grid-cols-3 gap-2">
         {kpis.map((kpi) => (
-          <div key={kpi.label} className="rounded-lg border border-violet-500/30 bg-violet-950/40 p-2">
-            <div className="text-[8px] text-violet-300/70">{kpi.label}</div>
-            <div className="text-[11px] text-violet-100 font-semibold">{kpi.value}</div>
+          <div key={kpi.label} className={`rounded-lg border p-2 ${isProductRoadmap ? 'border-sky-500/30 bg-sky-950/40' : 'border-violet-500/30 bg-violet-950/40'}`}>
+            <div className={`text-[8px] ${isProductRoadmap ? 'text-sky-300/70' : 'text-violet-300/70'}`}>{kpi.label}</div>
+            <div className={`text-[11px] font-semibold ${isProductRoadmap ? 'text-sky-100' : 'text-violet-100'}`}>{kpi.value}</div>
           </div>
         ))}
       </div>
@@ -599,7 +738,7 @@ function SocialPlannerPreview({ config }: { config: ReturnType<typeof getTemplat
           <span className="text-[9px] text-muted-foreground font-medium">Calendar</span>
           <div className="flex gap-1">
             {['Calendar', 'Board', 'Table'].map((v) => (
-              <span key={v} className={`px-1.5 py-0.5 text-[7px] rounded border ${v === 'Calendar' ? 'bg-violet-600/25 border-violet-500/40 text-violet-200' : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}>{v}</span>
+              <span key={v} className={`px-1.5 py-0.5 text-[7px] rounded border ${v === 'Calendar' ? (isProductRoadmap ? 'bg-sky-600/25 border-sky-500/40 text-sky-200' : 'bg-violet-600/25 border-violet-500/40 text-violet-200') : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}>{v}</span>
             ))}
           </div>
         </div>
@@ -608,9 +747,9 @@ function SocialPlannerPreview({ config }: { config: ReturnType<typeof getTemplat
             <div key={`h${i}`} className="text-[6px] text-muted-foreground text-center">{d}</div>
           ))}
           {calCells.slice(0, 21).map((cell, i) => (
-            <div key={i} className={`text-center rounded py-0.5 ${cell.active ? 'bg-violet-600/20 border border-violet-500/30' : 'bg-foreground/5 border border-transparent'}`}>
+            <div key={i} className={`text-center rounded py-0.5 ${cell.active ? (isProductRoadmap ? 'bg-sky-600/20 border border-sky-500/30' : 'bg-violet-600/20 border border-violet-500/30') : 'bg-foreground/5 border border-transparent'}`}>
               <div className="text-[6px] text-muted-foreground">{cell.day}</div>
-              {cell.label ? <div className="text-[5px] text-violet-300 truncate">{cell.label}</div> : null}
+              {cell.label ? <div className={`text-[5px] truncate ${isProductRoadmap ? 'text-sky-300' : 'text-violet-300'}`}>{cell.label}</div> : null}
             </div>
           ))}
         </div>
@@ -712,21 +851,58 @@ function RiskShieldIcon({ className }: { className?: string }) {
 /*  Replica: Content Planner for TikTok & Instagram — real hero image, title, row of social icons */
 /* ------------------------------------------------------------------ */
 const TIKTOK_IG_HERO_IMAGE = 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&q=80';
+const TRAVEL_JOURNAL_HERO_IMAGE = 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80';
+const GLOSSARY_HERO_IMAGE = 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80';
+const BOARD_MEETING_HERO_IMAGE = 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80';
 
 function TikTokIGPreview({ config, template }: { config: ReturnType<typeof getTemplatePreviewConfig>; template: Template }) {
-  const socialRow = [
-    { title: 'TikTok', Icon: TikTokIcon, color: 'text-foreground' },
-    { title: 'Instagram', Icon: InstagramIcon, color: 'text-pink-500' },
-    { title: 'Reels', Icon: InstagramIcon, color: 'text-purple-500' },
-    { title: 'Stories', Icon: InstagramIcon, color: 'text-amber-500' },
-  ];
+  const lowerSlug = (template.slug ?? '').toLowerCase();
+  const isTravelJournalMemories =
+    lowerSlug.includes('travel-journal-memories') ||
+    (template.title.toLowerCase().includes('travel journal') && template.title.toLowerCase().includes('memories'));
+  const isGlossaryDefinitions = lowerSlug === 'glossary-definitions-209';
+  const isBoardMeetingPack = lowerSlug === 'board-meeting-pack-93';
+  const heroImage = isTravelJournalMemories
+    ? TRAVEL_JOURNAL_HERO_IMAGE
+    : isBoardMeetingPack
+      ? BOARD_MEETING_HERO_IMAGE
+    : isGlossaryDefinitions
+      ? GLOSSARY_HERO_IMAGE
+      : TIKTOK_IG_HERO_IMAGE;
+  const socialRow = isTravelJournalMemories
+    ? [
+        { title: 'Places', emoji: '🗺️', color: 'text-cyan-300' },
+        { title: 'Moments', emoji: '✨', color: 'text-emerald-300' },
+        { title: 'Photos', emoji: '📷', color: 'text-sky-300' },
+        { title: 'Notes', emoji: '📝', color: 'text-amber-300' },
+      ]
+    : isBoardMeetingPack
+      ? [
+          { title: 'Metrics', emoji: '📊', color: 'text-sky-300' },
+          { title: 'Highlights', emoji: '✅', color: 'text-emerald-300' },
+          { title: 'Risks', emoji: '⚠️', color: 'text-amber-300' },
+          { title: 'Asks', emoji: '🧭', color: 'text-violet-300' },
+        ]
+    : isGlossaryDefinitions
+      ? [
+          { title: 'Terms', emoji: '📘', color: 'text-violet-300' },
+          { title: 'Definitions', emoji: '🧾', color: 'text-sky-300' },
+          { title: 'Examples', emoji: '💡', color: 'text-amber-300' },
+          { title: 'Sources', emoji: '🔎', color: 'text-emerald-300' },
+        ]
+    : [
+        { title: 'TikTok', Icon: TikTokIcon, color: 'text-foreground' },
+        { title: 'Instagram', Icon: InstagramIcon, color: 'text-pink-500' },
+        { title: 'Reels', Icon: InstagramIcon, color: 'text-purple-500' },
+        { title: 'Stories', Icon: InstagramIcon, color: 'text-amber-500' },
+      ];
 
   return (
     <div className="space-y-3 h-full flex flex-col">
       {/* Top: real image */}
       <div className="w-full rounded-lg overflow-hidden border border-border/60 flex-shrink-0 bg-muted">
         <img
-          src={TIKTOK_IG_HERO_IMAGE}
+          src={heroImage}
           alt=""
           className="w-full h-full object-cover min-h-[4.5rem] max-h-[7rem]"
         />
@@ -739,7 +915,11 @@ function TikTokIGPreview({ config, template }: { config: ReturnType<typeof getTe
       <div className="grid grid-cols-4 gap-1.5 flex-shrink-0">
         {socialRow.map((item) => (
           <div key={item.title} className="rounded-md border border-border/60 overflow-hidden bg-foreground/5 flex flex-col items-center justify-center p-1.5">
-            <item.Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${item.color}`} />
+            {'Icon' in item ? (
+              <item.Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${item.color}`} />
+            ) : (
+              <span className={`text-xl leading-none ${item.color}`}>{item.emoji}</span>
+            )}
             <span className="mt-0.5 text-[8px] text-foreground font-medium truncate w-full text-center">
               {item.title}
             </span>
@@ -1072,7 +1252,18 @@ function MonthlyPlannerPreview() {
 /* ------------------------------------------------------------------ */
 /*  Startup Operating System — date filter + green line + blue/green dual bar */
 /* ------------------------------------------------------------------ */
-function StartupOSPreview({ config }: { config: ReturnType<typeof getTemplatePreviewConfig> }) {
+function StartupOSPreview({
+  config,
+  template,
+}: {
+  config: ReturnType<typeof getTemplatePreviewConfig>;
+  template: Template;
+}) {
+  const isStepsTracker = (config.badge ?? '').toLowerCase().includes('steps');
+  const isSideIncomeFreelance = (template.slug ?? '').toLowerCase() === 'side-income-freelance-log-55';
+  const isCommissionIncentive = (template.slug ?? '').toLowerCase() === 'commission-incentive-tracker-140';
+  const isCashFlowOverview = (template.slug ?? '').toLowerCase() === 'cash-flow-overview-58';
+  const usesSalesPieCards = isSideIncomeFreelance || isCommissionIncentive || isCashFlowOverview;
   const linePoints = config.chartLine?.points ?? [32, 45, 38, 52, 58, 65, 70];
   const barMulti = config.chartBarMulti ?? {
     labels: ['W1', 'W2', 'W3', 'W4'],
@@ -1082,7 +1273,111 @@ function StartupOSPreview({ config }: { config: ReturnType<typeof getTemplatePre
     ],
   };
   const maxLine = Math.max(...linePoints, 1);
-  const maxBar = Math.max(...(barMulti.series[0]?.values ?? [1]), ...(barMulti.series[1]?.values ?? [1]), 1);
+  const allBarValues = barMulti.series.flatMap((s) => s.values ?? []);
+  const maxBar = Math.max(...allBarValues, 1);
+  const sideIncomePies = [
+    {
+      title: 'Income Sources',
+      totalLabel: 'Total Income',
+      totalValue: '$2.4k',
+      segments: [
+        { label: 'Retainers', value: 46, color: '#3B82F6' },
+        { label: 'Projects', value: 34, color: '#22C55E' },
+        { label: 'Other', value: 20, color: '#A78BFA' },
+      ],
+    },
+    {
+      title: 'Expense Split',
+      totalLabel: 'Total Expenses',
+      totalValue: '$640',
+      segments: [
+        { label: 'Tools', value: 39, color: '#F59E0B' },
+        { label: 'Software', value: 33, color: '#06B6D4' },
+        { label: 'Fees', value: 28, color: '#EC4899' },
+      ],
+    },
+  ] as const;
+  const commissionPies = [
+    {
+      title: 'Commission Mix',
+      totalLabel: 'Total Commission',
+      totalValue: '$3.1k',
+      segments: [
+        { label: 'New Biz', value: 48, color: '#0EA5E9' },
+        { label: 'Renewals', value: 32, color: '#22C55E' },
+        { label: 'Upsell', value: 20, color: '#F97316' },
+      ],
+    },
+    {
+      title: 'Incentive Payout',
+      totalLabel: 'Total Incentive',
+      totalValue: '$980',
+      segments: [
+        { label: 'Team Bonus', value: 44, color: '#8B5CF6' },
+        { label: 'Quarter Goal', value: 36, color: '#F43F5E' },
+        { label: 'SPIF', value: 20, color: '#EAB308' },
+      ],
+    },
+  ] as const;
+  const cashFlowPies = [
+    {
+      title: 'Cash Inflow',
+      totalLabel: 'Total Inflow',
+      totalValue: '$4.2k',
+      segments: [
+        { label: 'Sales', value: 44, color: '#14B8A6' },
+        { label: 'Services', value: 34, color: '#0EA5E9' },
+        { label: 'Other', value: 22, color: '#2DD4BF' },
+      ],
+    },
+    {
+      title: 'Cash Outflow',
+      totalLabel: 'Total Outflow',
+      totalValue: '$2.9k',
+      segments: [
+        { label: 'Payroll', value: 46, color: '#06B6D4' },
+        { label: 'Operations', value: 31, color: '#22D3EE' },
+        { label: 'Tools', value: 23, color: '#67E8F9' },
+      ],
+    },
+  ] as const;
+  const activePies = isCommissionIncentive ? commissionPies : isCashFlowOverview ? cashFlowPies : sideIncomePies;
+  const salesCardClass = isCommissionIncentive
+    ? 'rounded-lg border border-[#585426] bg-[#232100cc] p-2'
+    : isCashFlowOverview
+      ? 'rounded-lg border border-[#1b5f66] bg-[#062b30cc] p-2'
+      : 'rounded-lg border border-border/70 bg-foreground/5 p-2';
+  const salesTitleClass = isCommissionIncentive
+    ? 'text-[9px] text-[#f2ecbc] mb-1'
+    : isCashFlowOverview
+      ? 'text-[9px] text-[#c7f7fb] mb-1'
+      : 'text-[9px] text-muted-foreground mb-1';
+  const salesMutedClass = isCommissionIncentive
+    ? 'text-[7px] text-[#dfd8a0]'
+    : isCashFlowOverview
+      ? 'text-[7px] text-[#9fe8ef]'
+      : 'text-[7px] text-muted-foreground';
+  const salesValueClass = isCommissionIncentive
+    ? 'text-[9px] text-[#fff9d6] font-semibold'
+    : isCashFlowOverview
+      ? 'text-[9px] text-[#e6fdff] font-semibold'
+      : 'text-[9px] text-foreground font-semibold';
+  const salesDonutInnerClass = isCommissionIncentive
+    ? 'bg-[#1a1806]/95'
+    : isCashFlowOverview
+      ? 'bg-[#04191d]/95'
+      : 'bg-background/90';
+  const salesSegmentTextClass = isCommissionIncentive
+    ? 'text-[#e8e1af]'
+    : isCashFlowOverview
+      ? 'text-[#b7edf2]'
+      : 'text-muted-foreground';
+  const barColors = [
+    'bg-blue-500/80',
+    'bg-emerald-500/80',
+    'bg-violet-500/80',
+    'bg-amber-500/80',
+  ];
   return (
     <div className="space-y-2.5 h-full">
       <div className="flex items-center gap-2 flex-wrap">
@@ -1090,47 +1385,108 @@ function StartupOSPreview({ config }: { config: ReturnType<typeof getTemplatePre
         {['Last month', 'This week', 'Last week', 'Custom'].map((label, i) => (
           <span
             key={label}
-            className={`px-2.5 py-1 rounded-md text-[8px] border ${i === 0 ? 'bg-blue-500/25 border-blue-500/50 text-blue-700 dark:text-blue-200 font-medium' : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}
+            className={`px-2.5 py-1 rounded-md text-[8px] border ${
+              isCommissionIncentive
+                ? i === 0
+                  ? 'bg-[#2c290fcc] border-[#726b35] text-[#fff9d6] font-medium'
+                  : 'bg-[#23210099] border-[#4f4a22] text-[#dfd8a0]'
+                : isCashFlowOverview
+                  ? i === 0
+                    ? 'bg-[#0c3c42cc] border-[#1f7f86] text-[#d7fbff] font-medium'
+                    : 'bg-[#062b3099] border-[#1b5f66] text-[#9fe8ef]'
+                : i === 0
+                  ? `bg-blue-500/25 border-blue-500/50 ${usesSalesPieCards ? 'text-white' : 'text-[#e7edff]'} font-medium`
+                  : 'bg-foreground/5 border-border/60 text-muted-foreground'
+            }`}
           >
             {label}
           </span>
         ))}
       </div>
-      <div className="rounded-lg border border-border/70 bg-foreground/5 p-2">
-        <div className="text-[9px] text-muted-foreground mb-1.5">Trend</div>
-        <div className="h-12 w-full relative">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
-            <polyline
-              fill="none"
-              stroke="rgb(16, 185, 129)"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              points={linePoints.slice(0, 7).map((p, i) => `${(i / 6) * 100},${100 - (p / maxLine) * 95}`).join(' ')}
-            />
-          </svg>
-        </div>
-      </div>
-      <div className="rounded-lg border border-border/70 bg-foreground/5 p-2">
-        <div className="text-[9px] text-muted-foreground mb-1.5">By week</div>
-        <div className="flex items-end gap-2 h-14">
-          {barMulti.labels.map((label, i) => (
-            <div key={label} className="flex-1 flex flex-col items-center gap-1">
-              <div className="w-full flex gap-1 justify-center items-end h-10">
-                <span
-                  className="w-2 rounded-t bg-blue-500/80 flex-shrink-0"
-                  style={{ height: `${((barMulti.series[0]?.values[i] ?? 0) / maxBar) * 100}%`, minHeight: 2 }}
-                />
-                <span
-                  className="w-2 rounded-t bg-emerald-500/80 flex-shrink-0"
-                  style={{ height: `${((barMulti.series[1]?.values[i] ?? 0) / maxBar) * 100}%`, minHeight: 2 }}
-                />
+      {usesSalesPieCards ? (
+        <div className="grid grid-cols-2 gap-2">
+          {activePies.map((pie) => {
+            const total = pie.segments.reduce((sum, segment) => sum + segment.value, 0) || 1;
+            const gradient = pie.segments
+              .map((segment, idx) => {
+                const start = (pie.segments.slice(0, idx).reduce((sum, item) => sum + item.value, 0) / total) * 100;
+                const end = (pie.segments.slice(0, idx + 1).reduce((sum, item) => sum + item.value, 0) / total) * 100;
+                return `${segment.color} ${start}% ${end}%`;
+              })
+              .join(', ');
+
+            return (
+              <div key={pie.title} className={salesCardClass}>
+                <div className={salesTitleClass}>{pie.title}</div>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="relative h-10 w-10 rounded-full flex-shrink-0"
+                    style={{ background: `conic-gradient(${gradient})` }}
+                  >
+                    <div className={`absolute inset-2 rounded-full ${salesDonutInnerClass}`} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className={salesMutedClass}>{pie.totalLabel}</div>
+                    <div className={salesValueClass}>{pie.totalValue}</div>
+                  </div>
+                </div>
+                <div className="mt-1.5 space-y-0.5">
+                  {pie.segments.map((segment) => (
+                    <div
+                      key={segment.label}
+                      className={`flex items-center justify-between text-[7px] ${salesSegmentTextClass}`}
+                    >
+                      <span className="flex items-center gap-1 truncate">
+                        <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: segment.color }} />
+                        {segment.label}
+                      </span>
+                      <span>{segment.value}%</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <span className="text-[7px] text-muted-foreground">{label}</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
-      </div>
+      ) : null}
+      {!isStepsTracker && !usesSalesPieCards ? (
+        <div className="rounded-lg border border-border/70 bg-foreground/5 p-2">
+          <div className="text-[9px] text-muted-foreground mb-1.5">Trend</div>
+          <div className="h-12 w-full relative">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
+              <polyline
+                fill="none"
+                stroke="rgb(16, 185, 129)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                points={linePoints.slice(0, 7).map((p, i) => `${(i / 6) * 100},${100 - (p / maxLine) * 95}`).join(' ')}
+              />
+            </svg>
+          </div>
+        </div>
+      ) : null}
+      {!usesSalesPieCards ? (
+        <div className="rounded-lg border border-border/70 bg-foreground/5 p-2">
+          <div className="text-[9px] text-muted-foreground mb-1.5">By week</div>
+          <div className="flex items-end gap-2 h-14">
+            {barMulti.labels.map((label, i) => (
+              <div key={label} className="flex-1 flex flex-col items-center gap-1">
+                <div className="w-full flex gap-1 justify-center items-end h-10">
+                  {barMulti.series.map((series, seriesIdx) => (
+                    <span
+                      key={`${series.name}-${label}`}
+                      className={`w-1.5 rounded-t flex-shrink-0 ${barColors[seriesIdx % barColors.length]}`}
+                      style={{ height: `${((series.values[i] ?? 0) / maxBar) * 100}%`, minHeight: 2 }}
+                    />
+                  ))}
+                </div>
+                <span className="text-[7px] text-muted-foreground">{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -1219,13 +1575,20 @@ function FinanceOSPreview({
 function NoteTakingMethodsPreview({ config }: { config: ReturnType<typeof getTemplatePreviewConfig> }) {
   const linePoints = config.chartLine?.points ?? [20, 35, 28, 48, 52, 60, 55, 72];
   const maxP = Math.max(...linePoints, 1);
+  const lineColor = '#60A5FA';
+  const activeFilterStyle = {
+    backgroundColor: 'rgba(96, 165, 250, 0.18)',
+    borderColor: 'rgba(96, 165, 250, 0.45)',
+    color: lineColor,
+  };
   return (
     <div className="space-y-2.5 h-full">
       <div className="flex gap-1.5 flex-wrap">
         {['Cornell', 'Outline', 'Concept map', 'Other'].map((label, i) => (
           <span
             key={label}
-            className={`px-2 py-1 rounded text-[8px] border ${i === 0 ? 'bg-primary/20 border-primary/40 text-primary-foreground font-medium' : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}
+            className={`px-2 py-1 rounded text-[8px] border ${i === 0 ? 'font-medium' : 'bg-foreground/5 border-border/60 text-muted-foreground'}`}
+            style={i === 0 ? activeFilterStyle : undefined}
           >
             {label}
           </span>
@@ -1236,8 +1599,8 @@ function NoteTakingMethodsPreview({ config }: { config: ReturnType<typeof getTem
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
             <polyline
               fill="none"
-              stroke="rgb(96, 165, 250)"
-              strokeWidth="10"
+              stroke={lineColor}
+              strokeWidth="6"
               strokeLinecap="round"
               strokeLinejoin="round"
               points={linePoints.map((p, i) => `${(i / (linePoints.length - 1)) * 100},${100 - (p / maxP) * 95}`).join(' ')}
@@ -1490,6 +1853,7 @@ function ProductivityChartsPreview({ config }: { config: ReturnType<typeof getTe
 export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewProps) {
   const config = getTemplatePreviewConfig(template);
   const notes = (config.notes ?? template.whats_inside ?? []).slice(0, 4);
+  const lowerSlug = (template.slug ?? '').toLowerCase();
 
   const skeleton = config.skeleton ?? 'dashboard';
   const isDocShell = config.shell === 'doc';
@@ -1499,15 +1863,37 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
 
   const isFeaturedTarot = template.title.toLowerCase().includes('tarot learning vault');
   const isAIEngineeringBaraa = template.title.toLowerCase().includes('ai engineering roadmap by data with baraa');
+  const isBucketListLifeGoals =
+    (template.slug ?? '').toLowerCase().includes('bucket-list-life-goals') ||
+    (template.title.toLowerCase().includes('bucket list') && template.title.toLowerCase().includes('life goals'));
   const isAIEngineeringSkillPath = template.title.toLowerCase().includes('ai engineering skill path');
   const isFeaturedAI = isAIEngineeringBaraa || isAIEngineeringSkillPath;
   const isFeaturedTravel =
     template.title.toLowerCase().includes('travel bucket list') ||
-    (template.title.toLowerCase().includes('newsletter') && template.title.toLowerCase().includes('email content'));
+    (template.title.toLowerCase().includes('newsletter') && template.title.toLowerCase().includes('email content')) ||
+    lowerSlug === 'date-night-ideas-bank-192' ||
+    lowerSlug === 'rfp-response-tracker-138';
   const isFeatured12Week = template.title.toLowerCase().includes('12 week year planner');
-  const isReplicaTravelWish = template.title.toLowerCase().includes('travel bucket wish list');
-  const isReplicaSocialPlanner = template.title.toLowerCase().includes('2026 social media');
-  const isReplicaTikTokIG = template.title.toLowerCase().includes('content planner for tiktok');
+  const isStrategicInitiativesTracker =
+    lowerSlug === 'strategic-initiatives-tracker-102' ||
+    template.title.toLowerCase().includes('strategic initiatives tracker');
+  const isProjectRoadmapTimeline =
+    lowerSlug === 'project-roadmap-timeline-103' ||
+    template.title.toLowerCase().includes('project roadmap & timeline');
+  const isHealthGoalsAnnualCheckup = lowerSlug === 'health-goals-annual-check-up-177';
+  const isFeatured12WeekLike =
+    isFeatured12Week || isStrategicInitiativesTracker || isProjectRoadmapTimeline || isHealthGoalsAnnualCheckup;
+  const isReplicaTravelWish =
+    template.title.toLowerCase().includes('travel bucket wish list') ||
+    lowerSlug === 'pet-care-vet-tracker-189' ||
+    lowerSlug.includes('places-to-revisit');
+  const isPlacesToRevisit = lowerSlug.includes('places-to-revisit');
+  const isReplicaSocialPlanner =
+    template.title.toLowerCase().includes('2026 social media') ||
+    lowerSlug === 'product-roadmap-backlog-91';
+  const isReplicaTikTokIG =
+    template.title.toLowerCase().includes('content planner for tiktok') ||
+    lowerSlug === 'glossary-definitions-209';
   const isInvestmentPortfolioLog =
     template.title.toLowerCase().includes('investment & portfolio log') ||
     (template.slug ?? '').toLowerCase().includes('investment-portfolio-log');
@@ -1515,15 +1901,29 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
   const isStudentLessonPlanner = template.title.toLowerCase().includes('student and lesson planner');
   const isMonthlyPlanner = template.title.toLowerCase().includes('monthly planner');
   const isMyClassSchedule = template.title.toLowerCase().includes('my class schedule');
-  const isStartupOS = template.title.toLowerCase().includes('startup operating system') || template.title.toLowerCase().includes('startup os');
+  const isStartupOS =
+    template.title.toLowerCase().includes('startup operating system') ||
+    template.title.toLowerCase().includes('startup os') ||
+    lowerSlug === 'steps-activity-tracker-168';
   const isWeddingPlanning = template.title.toLowerCase().includes('wedding planning');
   const isConferenceAgenda = template.title.toLowerCase().includes('conference') && template.title.toLowerCase().includes('trip agenda');
+  const isStudyHabitTracker =
+    (template.slug ?? '').toLowerCase().includes('study-habit-tracker') ||
+    template.title.toLowerCase().includes('study habit tracker');
+  const isTravelJournalMemories =
+    (template.slug ?? '').toLowerCase().includes('travel-journal-memories') ||
+    (template.title.toLowerCase().includes('travel journal') && template.title.toLowerCase().includes('memories'));
   const isUXResearchRepositoryLite = template.title.toLowerCase().includes('ux research repository lite');
   const isSalesActivityLog = template.title.toLowerCase().includes('sales activity log');
   const isContentCreatorKit = (template.slug ?? '').toLowerCase().includes('content-creator-kit') || template.title.toLowerCase().includes('content creator kit');
   const isSubscriptionRecurring = (template.slug ?? '').toLowerCase().includes('subscription-recurring-costs');
   const isExpenseTracker2026 = (template.slug ?? '').toLowerCase().includes('expense-tracker-2026');
-  const isAnyFeatured = isFeaturedTarot || isFeaturedAI || isFeaturedTravel || isFeatured12Week || isReplicaTravelWish || isReplicaSocialPlanner || isReplicaTikTokIG || isInvestmentPortfolioLog || isReadingList || isStudentLessonPlanner || isMonthlyPlanner || isMyClassSchedule || isStartupOS || isWeddingPlanning || isConferenceAgenda || isUXResearchRepositoryLite || isSalesActivityLog;
+  const isWeddingBudgetExpenses = lowerSlug.includes('wedding-budget-expenses');
+  const isGtdInspiredTaskSystem = lowerSlug === 'gtd-inspired-task-system-6';
+  const isTerritoryAccountAssignment = lowerSlug === 'territory-account-assignment-131';
+  const isCapstoneProjectShowcase = lowerSlug === 'capstone-project-showcase-40';
+  const isBoardMeetingPack = lowerSlug === 'board-meeting-pack-93';
+  const isAnyFeatured = isFeaturedTarot || isFeaturedAI || isFeaturedTravel || isFeatured12WeekLike || isReplicaTravelWish || isReplicaSocialPlanner || isReplicaTikTokIG || isInvestmentPortfolioLog || isReadingList || isStudentLessonPlanner || isMonthlyPlanner || isMyClassSchedule || isStartupOS || isWeddingPlanning || isConferenceAgenda || isStudyHabitTracker || isTravelJournalMemories || isUXResearchRepositoryLite || isSalesActivityLog || isBucketListLifeGoals;
 
   return (
     <div className={`relative w-full h-full ${variant === 'card' ? 'scale-[1.02]' : ''}`}>
@@ -1541,7 +1941,7 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
         }`}
       >
         {/* ── Top chrome (hidden for Reading List to avoid duplicate title) ── */}
-        {!isReadingList && (
+        {!isReadingList && !isPlacesToRevisit && (
           <div
             className={`flex items-center justify-between px-4 py-2 border-b border-border/70 gap-2 ${
               isDocShell
@@ -1574,7 +1974,7 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
         )}
 
         {/* ── Body ── */}
-        <div className={`flex ${isReadingList ? 'h-full' : 'h-[92%]'}`}>
+        <div className={`flex ${isReadingList || isPlacesToRevisit ? 'h-full' : 'h-[92%]'}`}>
           {showSidebar && !isAnyFeatured && !isSubscriptionRecurring && !isExpenseTracker2026 ? (
             <aside className="hidden sm:flex flex-col w-28 border-r border-border/70 bg-background/80 px-2 py-3 gap-2">
               <div className="h-7 rounded-md bg-foreground/5" />
@@ -1637,17 +2037,55 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
           ) : null}
 
           {/* Featured: 12-Week sidebar */}
-          {isFeatured12Week ? (
-            <aside className="hidden sm:flex flex-col w-28 border-r border-amber-500/20 bg-amber-950/30 px-2 py-3 gap-2">
-              <div className="h-7 rounded-md bg-amber-600/15 border border-amber-500/20 flex items-center justify-center">
-                <span className="text-[8px] text-amber-300/80 font-medium">Week 7 / 12</span>
+          {isFeatured12WeekLike ? (
+            <aside
+              className={`hidden sm:flex flex-col w-28 border-r px-2 py-3 gap-2 ${
+                isStrategicInitiativesTracker || isProjectRoadmapTimeline
+                  ? 'border-pink-400/20 bg-pink-950/25'
+                  : isHealthGoalsAnnualCheckup
+                    ? 'border-orange-400/25 bg-orange-950/25'
+                  : 'border-amber-500/20 bg-amber-950/30'
+              }`}
+            >
+              <div
+                className={`h-7 rounded-md flex items-center justify-center ${
+                  isStrategicInitiativesTracker || isProjectRoadmapTimeline
+                    ? 'bg-pink-500/15 border border-pink-400/20'
+                    : isHealthGoalsAnnualCheckup
+                      ? 'bg-orange-500/20 border border-orange-400/25'
+                    : 'bg-amber-600/15 border border-amber-500/20'
+                }`}
+              >
+                <span
+                  className={`text-[8px] font-medium ${
+                    isStrategicInitiativesTracker || isProjectRoadmapTimeline
+                      ? 'text-pink-200/80'
+                      : isHealthGoalsAnnualCheckup
+                        ? 'text-orange-200/85'
+                        : 'text-amber-300/80'
+                  }`}
+                >
+                  Week 7 / 12
+                </span>
               </div>
               <div className="space-y-1.5 mt-1">
                 {config.sidebarSections.map((section, i) => (
-                  <div key={section} className={`px-1.5 py-1 rounded-sm text-[9px] truncate border ${
-                    i === 0 ? 'bg-amber-600/20 border-amber-500/30 text-amber-200/90' :
-                    'bg-amber-600/10 border-amber-500/15 text-amber-200/70'
-                  }`}>
+                  <div
+                    key={section}
+                    className={`px-1.5 py-1 rounded-sm text-[9px] truncate border ${
+                      isStrategicInitiativesTracker || isProjectRoadmapTimeline
+                        ? i === 0
+                          ? 'bg-pink-500/20 border-pink-400/30 text-pink-100/90'
+                          : 'bg-pink-500/10 border-pink-400/15 text-pink-100/70'
+                        : isHealthGoalsAnnualCheckup
+                          ? i === 0
+                            ? 'bg-orange-500/25 border-orange-400/35 text-orange-100/95'
+                            : 'bg-orange-500/10 border-orange-400/20 text-orange-100/80'
+                        : i === 0
+                          ? 'bg-amber-600/20 border-amber-500/30 text-amber-200/90'
+                          : 'bg-amber-600/10 border-amber-500/15 text-amber-200/70'
+                    }`}
+                  >
                     {section}
                   </div>
                 ))}
@@ -1656,7 +2094,7 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
           ) : null}
 
           {/* Replica: Travel Wish sidebar */}
-          {isReplicaTravelWish ? (
+          {isReplicaTravelWish && !isPlacesToRevisit ? (
             <aside className="hidden sm:flex flex-col w-28 border-r border-teal-500/20 bg-teal-950/25 px-2 py-3 gap-2">
               <div className="h-7 rounded-md bg-teal-600/15 border border-teal-500/20" />
               <div className="space-y-1.5 mt-1">
@@ -1669,11 +2107,16 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
 
           {/* Replica: Social Planner sidebar */}
           {isReplicaSocialPlanner ? (
-            <aside className="hidden sm:flex flex-col w-28 border-r border-violet-500/20 bg-violet-950/25 px-2 py-3 gap-2">
-              <div className="h-7 rounded-md bg-violet-600/15 border border-violet-500/20" />
+            <aside className={`hidden sm:flex flex-col w-28 border-r px-2 py-3 gap-2 ${lowerSlug === 'product-roadmap-backlog-91' ? 'border-sky-500/20 bg-sky-950/25' : 'border-violet-500/20 bg-violet-950/25'}`}>
+              <div className={`h-7 rounded-md ${lowerSlug === 'product-roadmap-backlog-91' ? 'bg-sky-600/15 border border-sky-500/20' : 'bg-violet-600/15 border border-violet-500/20'}`} />
               <div className="space-y-1.5 mt-1">
                 {config.sidebarSections.map((section) => (
-                  <div key={section} className="px-1.5 py-1 rounded-sm bg-violet-600/10 border border-violet-500/10 text-[9px] text-violet-200/70 truncate">{section}</div>
+                  <div
+                    key={section}
+                    className={`px-1.5 py-1 rounded-sm text-[9px] truncate ${lowerSlug === 'product-roadmap-backlog-91' ? 'bg-sky-600/10 border border-sky-500/10 text-sky-200/70' : 'bg-violet-600/10 border border-violet-500/10 text-violet-200/70'}`}
+                  >
+                    {section}
+                  </div>
                 ))}
               </div>
             </aside>
@@ -1717,7 +2160,7 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
             {isFeaturedTarot ? <TarotPreview config={config} template={template} /> : null}
 
             {/* ── AI Engineering Roadmap by Data With Baraa (article-style, no sidebar) ── */}
-            {isAIEngineeringBaraa ? <AIRoadmapPreview config={config} template={template} /> : null}
+            {isAIEngineeringBaraa || isBucketListLifeGoals ? <AIRoadmapPreview config={config} template={template} /> : null}
             {/* ── AI Engineering Skill Path (roadmap with sidebar) ── */}
             {isAIEngineeringSkillPath ? <AISkillPathPreview config={config} template={template} /> : null}
 
@@ -1725,7 +2168,7 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
             {isFeaturedTravel ? <TravelBucketPreview config={config} template={template} /> : null}
 
             {/* ── Featured: 12 Week Year Planner custom body ── */}
-            {isFeatured12Week ? <TwelveWeekPreview config={config} template={template} /> : null}
+            {isFeatured12WeekLike ? <TwelveWeekPreview config={config} template={template} /> : null}
 
             {/* ── Reading List custom body ── */}
             {isReadingList ? <ReadingListPreview config={config} template={template} /> : null}
@@ -1740,7 +2183,7 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
             {isMyClassSchedule ? <ClassSchedulePreview config={config} /> : null}
 
             {/* ── Startup OS: date filter + green line + blue/green dual bar ── */}
-            {isStartupOS ? <StartupOSPreview config={config} /> : null}
+            {isStartupOS ? <StartupOSPreview config={config} template={template} /> : null}
 
             {/* ── Wedding Planning Hub ── */}
             {isWeddingPlanning ? <WeddingPlanningPreview config={config} template={template} /> : null}
@@ -1755,13 +2198,13 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
             {isSalesActivityLog ? <SalesActivityLogPreview template={template} /> : null}
 
             {/* ── Replica: Travel Bucket Wish List custom body ── */}
-            {isReplicaTravelWish ? <TravelWishPreview config={config} template={template} /> : null}
+            {isReplicaTravelWish || isStudyHabitTracker ? <TravelWishPreview config={config} template={template} /> : null}
 
             {/* ── Replica: Social Media Content Planner custom body ── */}
             {isReplicaSocialPlanner ? <SocialPlannerPreview config={config} template={template} /> : null}
 
             {/* ── Replica: TikTok & Instagram Content Planner custom body ── */}
-            {isReplicaTikTokIG ? <TikTokIGPreview config={config} template={template} /> : null}
+            {isReplicaTikTokIG || isTravelJournalMemories || isBoardMeetingPack ? <TikTokIGPreview config={config} template={template} /> : null}
 
             {/* ── Replica: Investment & Portfolio Log custom body ── */}
             {isInvestmentPortfolioLog ? <InvestmentPortfolioPreview template={template} /> : null}
@@ -1781,22 +2224,24 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
                     </div>
                   ))}
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-md border border-border/70 bg-foreground/5 p-2">
-                    <div className="text-[9px] text-muted-foreground mb-1">Quick links</div>
-                    <div className="grid grid-cols-2 gap-1">
-                      {['Tasks', 'Calendar', 'Notes', 'Projects'].map((s) => (
-                        <div key={s} className="rounded bg-background/70 border border-border/60 px-1.5 py-1 text-[8px] text-foreground truncate">{s}</div>
+                {!isWeddingBudgetExpenses ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-md border border-border/70 bg-foreground/5 p-2">
+                      <div className="text-[9px] text-muted-foreground mb-1">Quick links</div>
+                      <div className="grid grid-cols-2 gap-1">
+                        {['Tasks', 'Calendar', 'Notes', 'Projects'].map((s) => (
+                          <div key={s} className="rounded bg-background/70 border border-border/60 px-1.5 py-1 text-[8px] text-foreground truncate">{s}</div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="rounded-md border border-border/70 bg-foreground/5 p-2">
+                      <div className="text-[9px] text-muted-foreground mb-1">Today focus</div>
+                      {notes.slice(0, 3).map((n, i) => (
+                        <div key={i} className="text-[8px] text-foreground truncate mb-0.5">{n}</div>
                       ))}
                     </div>
                   </div>
-                  <div className="rounded-md border border-border/70 bg-foreground/5 p-2">
-                    <div className="text-[9px] text-muted-foreground mb-1">Today focus</div>
-                    {notes.slice(0, 3).map((n, i) => (
-                      <div key={i} className="text-[8px] text-foreground truncate mb-0.5">{n}</div>
-                    ))}
-                  </div>
-                </div>
+                ) : null}
                 <div className="rounded-md border border-border/70 overflow-hidden">
                   <div className="grid grid-cols-4 bg-foreground/5 border-b border-border/70">
                     {(config.tableHeaders ?? ['Item', 'Owner', 'Status', 'Date']).map((h) => (
@@ -1958,7 +2403,7 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
 
             {/* Startup Operating System — date filter + green line + dual bar */}
             {!isAnyFeatured && skeleton === 'startup-os' ? (
-              <StartupOSPreview config={config} />
+              <StartupOSPreview config={config} template={template} />
             ) : null}
 
             {/* Finance OS — KPIs + trend line + document table (Tax Prep, etc.) */}
@@ -1999,7 +2444,23 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
               ) : (
                 <div className="space-y-2 h-full">
                   <div className="rounded-md border border-border/70 bg-foreground/5 p-2">
-                    <div className="h-8 rounded bg-gradient-to-r from-primary/20 to-transparent border border-primary/20" />
+                    {isGtdInspiredTaskSystem || isTerritoryAccountAssignment || isCapstoneProjectShowcase ? (
+                      <div className="h-8 rounded overflow-hidden border border-primary/20">
+                        <img
+                          src={
+                            isTerritoryAccountAssignment
+                              ? TERRITORY_ACCOUNT_HERO_IMAGE
+                              : isCapstoneProjectShowcase
+                                ? CAPSTONE_SHOWCASE_HERO_IMAGE
+                                : GTD_TASK_SYSTEM_HERO_IMAGE
+                          }
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="h-8 rounded bg-gradient-to-r from-primary/20 to-transparent border border-primary/20" />
+                    )}
                     <div className="text-[10px] text-foreground font-medium mt-1">Executive Summary</div>
                   </div>
                   <div className="rounded-md border border-border/70 bg-foreground/5 p-2">
@@ -2010,12 +2471,27 @@ export function TemplatePreview({ template, variant = 'card' }: TemplatePreviewP
                     <div className="h-1.5 w-4/6 rounded-full bg-foreground/10" />
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="rounded-md border border-border/70 bg-foreground/5 p-2 text-[8px] text-muted-foreground">
-                      "Key insight quote / callout block"
-                    </div>
-                    <div className="rounded-md border border-border/70 bg-foreground/5 p-2">
-                      <div className="h-8 rounded bg-primary/15 border border-primary/20" />
-                    </div>
+                    {isCapstoneProjectShowcase ? (
+                      <>
+                        <div className="rounded-md border border-border/70 bg-foreground/5 p-2">
+                          <div className="h-8 rounded border bg-slate-400/20 border-slate-300/35" />
+                        </div>
+                        <div className="rounded-md border border-border/70 bg-foreground/5 p-2 text-[8px] text-muted-foreground">
+                          "Key insight quote / callout block"
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="rounded-md border border-border/70 bg-foreground/5 p-2 text-[8px] text-muted-foreground">
+                          "Key insight quote / callout block"
+                        </div>
+                        <div className="rounded-md border border-border/70 bg-foreground/5 p-2">
+                          <div
+                            className={`h-8 rounded border ${isTerritoryAccountAssignment ? 'bg-amber-400/25 border-amber-300/45' : 'bg-primary/15 border-primary/20'}`}
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )
