@@ -1,0 +1,74 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#070B12"/>
+      <stop offset="1" stop-color="#05070B"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="180" y1="140" x2="1020" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22C55E" stop-opacity="0.22"/>
+      <stop offset="0.5" stop-color="#60A5FA" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#F59E0B" stop-opacity="0.14"/>
+    </linearGradient>
+    <filter id="shadow" x="-20" y="-20" width="1240" height="940" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" rx="44" fill="url(#bg)"/>
+  <path d="M180 260C220 150 380 90 520 140C660 190 720 140 820 130C920 120 1040 200 1060 320C1080 440 1020 520 940 580C860 640 840 760 700 780C560 800 500 750 420 730C340 710 240 670 200 600C160 530 130 430 150 350C170 270 160 320 180 260Z" fill="url(#accent)" opacity="0.92"/>
+
+  <g filter="url(#shadow)">
+    <rect x="110" y="120" width="980" height="660" rx="28" fill="#0B0F14" stroke="#1F2937" stroke-width="2"/>
+    <rect x="110" y="120" width="980" height="56" rx="28" fill="#0E1623"/>
+    <circle cx="150" cy="148" r="7" fill="#EF4444"/>
+    <circle cx="175" cy="148" r="7" fill="#F59E0B"/>
+    <circle cx="200" cy="148" r="7" fill="#22C55E"/>
+
+    <!-- Finance dashboard -->
+    <rect x="130" y="190" width="940" height="570" rx="18" fill="#0B1220" stroke="#1F2937"/>
+    <rect x="156" y="216" width="360" height="28" rx="14" fill="#0F172A" stroke="#1F2937"/>
+    <rect x="168" y="224" width="132" height="12" rx="6" fill="#22C55E" fill-opacity="0.95"/>
+
+    <!-- KPI cards -->
+    <rect x="156" y="270" width="290" height="120" rx="16" fill="#0C1627" stroke="#20324C"/>
+    <rect x="176" y="292" width="120" height="12" rx="6" fill="#60A5FA" fill-opacity="0.85"/>
+    <rect x="176" y="320" width="180" height="22" rx="11" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="188" y="328" width="84" height="6" rx="3" fill="#94A3B8" fill-opacity="0.6"/>
+    <rect x="176" y="356" width="220" height="10" rx="5" fill="#334155"/>
+
+    <rect x="470" y="270" width="290" height="120" rx="16" fill="#0C1627" stroke="#20324C"/>
+    <rect x="490" y="292" width="96" height="12" rx="6" fill="#F59E0B" fill-opacity="0.9"/>
+    <rect x="490" y="320" width="200" height="22" rx="11" fill="#0F1B2B" stroke="#23324A"/>
+    <rect x="502" y="328" width="110" height="6" rx="3" fill="#94A3B8" fill-opacity="0.6"/>
+    <rect x="490" y="356" width="230" height="10" rx="5" fill="#334155"/>
+
+    <rect x="784" y="270" width="286" height="120" rx="16" fill="#0C1627" stroke="#20324C"/>
+    <rect x="804" y="292" width="110" height="12" rx="6" fill="#A78BFA" fill-opacity="0.95"/>
+    <path d="M804 360C828 342 854 350 874 330C894 310 920 322 940 304C960 286 986 292 1008 276C1030 260 1050 268 1070 254" stroke="#22C55E" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Chart -->
+    <rect x="156" y="410" width="600" height="350" rx="16" fill="#0C131D" stroke="#1F2937"/>
+    <rect x="156" y="410" width="600" height="44" rx="16" fill="#0E1623"/>
+    <rect x="176" y="426" width="160" height="12" rx="6" fill="#60A5FA" fill-opacity="0.85"/>
+    <path d="M188 720C236 672 278 684 318 642C358 600 396 612 438 572C480 532 520 548 560 508C600 468 636 486 676 452C716 418 738 426 724 402" stroke="#60A5FA" stroke-width="4" stroke-linecap="round"/>
+    <path d="M188 740C240 702 280 722 320 690C360 658 402 674 444 646C486 618 524 626 566 598C608 570 646 586 686 566C726 546 746 548 742 532" stroke="#F59E0B" stroke-opacity="0.9" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Budget table -->
+    <rect x="784" y="410" width="286" height="350" rx="16" fill="#0C131D" stroke="#1F2937"/>
+    <rect x="784" y="410" width="286" height="44" rx="16" fill="#0E1623"/>
+    <rect x="804" y="426" width="120" height="12" rx="6" fill="#22C55E" fill-opacity="0.9"/>
+    <rect x="804" y="476" width="246" height="10" rx="5" fill="#1F2937"/>
+    <rect x="804" y="504" width="226" height="10" rx="5" fill="#1F2937"/>
+    <rect x="804" y="532" width="242" height="10" rx="5" fill="#1F2937"/>
+    <rect x="804" y="560" width="212" height="10" rx="5" fill="#1F2937"/>
+    <rect x="804" y="588" width="236" height="10" rx="5" fill="#1F2937"/>
+    <rect x="804" y="616" width="220" height="10" rx="5" fill="#1F2937"/>
+    <rect x="804" y="644" width="246" height="10" rx="5" fill="#1F2937"/>
+    <rect x="804" y="672" width="230" height="10" rx="5" fill="#1F2937"/>
+    <rect x="804" y="700" width="240" height="10" rx="5" fill="#1F2937"/>
+  </g>
+
+  <text x="150" y="850" fill="#94A3B8" font-family="ui-sans-serif, system-ui, -apple-system" font-size="26" letter-spacing="0.5">
+    NeoNotion  Personal Finance Tracker (Preview)
+  </text>
+</svg>
