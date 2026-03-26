@@ -45,7 +45,7 @@ const Refunds = () => {
       <LegalSection title="4. How to Request a Refund">
         <p>To request a refund:</p>
         <ol className="list-decimal pl-6 space-y-2">
-          <li>Email us at greaterthan2026@gmail.com</li>
+          <li>Contact us</li>
           <li>Include your order number or account email</li>
           <li>Provide a brief explanation of your reason for requesting a refund</li>
         </ol>
@@ -88,9 +88,8 @@ const Refunds = () => {
 
       <LegalSection title="9. Contact Us">
         <p>
-          If you have any questions about this Refund Policy, please contact us at:
+          If you have any questions about this Refund Policy, please contact us.
         </p>
-        <p className="text-primary">greaterthan2026@gmail.com</p>
       </LegalSection>
 
       <p className="text-sm italic mt-8">

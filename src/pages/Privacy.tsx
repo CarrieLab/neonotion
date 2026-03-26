@@ -67,7 +67,7 @@ const Privacy = () => {
           <li>Data portability</li>
           <li>Withdraw consent at any time</li>
         </ul>
-        <p>To exercise these rights, please contact us at greaterthan2026@gmail.com.</p>
+        <p>To exercise these rights, please contact us.</p>
       </LegalSection>
 
       <LegalSection title="7. California Privacy Rights">
@@ -96,9 +96,8 @@ const Privacy = () => {
 
       <LegalSection title="11. Contact Us">
         <p>
-          If you have any questions about this Privacy Policy, please contact us at:
+          If you have any questions about this Privacy Policy, please contact us.
         </p>
-        <p className="text-primary">greaterthan2026@gmail.com</p>
       </LegalSection>
 
       <p className="text-sm italic mt-8">

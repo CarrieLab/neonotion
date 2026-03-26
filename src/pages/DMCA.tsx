@@ -28,7 +28,6 @@ const DMCA = () => {
         <div className="bg-secondary p-4 rounded-lg mt-4">
           <p><strong>SELLVERGE LLC</strong></p>
           <p>Attn: Copyright Agent</p>
-          <p>Email: <span className="text-primary">greaterthan2026@gmail.com</span></p>
         </div>
         <p className="mt-4">
           Please note that under 17 U.S.C. § 512(f), you may be liable for any damages, including costs and attorneys' fees, if you knowingly misrepresent that material is infringing.
@@ -99,13 +98,11 @@ const DMCA = () => {
 
       <LegalSection title="8. Contact Us">
         <p>
-          For DMCA matters, contact our Copyright Agent at:
+          For DMCA matters, contact our Copyright Agent.
         </p>
-        <p className="text-primary">greaterthan2026@gmail.com</p>
         <p>
-          For general legal inquiries:
+          For general legal inquiries, contact us.
         </p>
-        <p className="text-primary">greaterthan2026@gmail.com</p>
       </LegalSection>
 
       <p className="text-sm italic mt-8">

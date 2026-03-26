@@ -41,10 +41,12 @@ export function Footer() {
             </p>
             <a
               href="mailto:greaterthan2026@gmail.com"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center"
+              aria-label="Email us"
+              title="Email us"
             >
               <Mail className="h-4 w-4" />
-              greaterthan2026@gmail.com
+              <span className="sr-only">greaterthan2026@gmail.com</span>
             </a>
           </div>
 

@@ -69,9 +69,8 @@ const AcceptableUse = () => {
 
       <LegalSection title="6. Reporting Violations">
         <p>
-          If you become aware of any violations of this policy, please report them to us at:
+          If you become aware of any violations of this policy, please report them to us.
         </p>
-        <p className="text-primary">greaterthan2026@gmail.com</p>
         <p>
           We investigate all reports and take appropriate action, which may include content removal and account termination.
         </p>
@@ -100,9 +99,8 @@ const AcceptableUse = () => {
 
       <LegalSection title="9. Contact Us">
         <p>
-          If you have any questions about this policy, please contact us at:
+          If you have any questions about this policy, please contact us.
         </p>
-        <p className="text-primary">greaterthan2026@gmail.com</p>
       </LegalSection>
 
       <p className="text-sm italic mt-8">

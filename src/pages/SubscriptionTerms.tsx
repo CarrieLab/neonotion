@@ -124,9 +124,8 @@ const SubscriptionTerms = () => {
 
       <LegalSection title="12. Contact Us">
         <p>
-          If you have any questions about your subscription, please contact us at:
+          If you have any questions about your subscription, please contact us.
         </p>
-        <p className="text-primary">greaterthan2026@gmail.com</p>
       </LegalSection>
 
       <p className="text-sm italic mt-8">
