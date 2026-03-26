@@ -12,8 +12,8 @@ export function AnnouncementBar() {
       <div className="container mx-auto px-4 py-2.5 flex items-center justify-center gap-2 text-sm">
         <Sparkles className="h-4 w-4 text-primary" />
         <span className="text-foreground/90">
-          <span className="text-primary font-medium">New drops every week</span>
-          {' '}— Fresh templates added regularly
+          <span className="text-primary font-medium">A Personal Site</span>
+          {' '}- Share templates. Learn to build. Work faster.
         </span>
         <Sparkles className="h-4 w-4 text-primary" />
       </div>
