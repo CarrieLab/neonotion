@@ -7,7 +7,7 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   base: mode === "production" ? "./" : "/",
   build: {
-    outDir: "docs",
+    outDir: "dist",
   },
   server: {
     host: "localhost",
